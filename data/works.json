@@ -1,1 +1,140 @@
-[]
+[
+    {
+        "id": "cq-library-of-babel",
+        "title": "The Library of Babel",
+        "author": "Jorge Luis Borges",
+        "year": 1941,
+        "type": "Short Story",
+        "genres": [
+            "Weird Fiction"
+        ],
+        "subgenres": [],
+        "themes": [
+            "Impossible Places",
+            "Infinity",
+            "Forbidden Knowledge"
+        ],
+        "featured": true
+    },
+    {
+        "id": "cq-king-in-yellow",
+        "title": "The King in Yellow",
+        "author": "Robert W. Chambers",
+        "year": 1895,
+        "type": "Collection",
+        "genres": [
+            "Horror",
+            "Weird Fiction"
+        ],
+        "subgenres": [
+            "Cosmic Horror"
+        ],
+        "themes": [
+            "Forbidden Knowledge",
+            "Reality Breakdown"
+        ]
+    },
+    {
+        "id": "cq-hyperion",
+        "title": "Hyperion",
+        "author": "Dan Simmons",
+        "year": 1989,
+        "type": "Novel",
+        "genres": [
+            "Science Fiction"
+        ],
+        "subgenres": [
+            "Cosmic Horror"
+        ],
+        "themes": [
+            "Time",
+            "Religion",
+            "Identity"
+        ]
+    },
+    {
+        "id": "cq-antimemetics",
+        "title": "There Is No Antimemetics Division",
+        "author": "qntm",
+        "year": 2020,
+        "type": "Novel",
+        "genres": [
+            "Science Fiction",
+            "Horror"
+        ],
+        "subgenres": [
+            "Cosmic Horror"
+        ],
+        "themes": [
+            "Memory",
+            "Identity",
+            "Reality Breakdown"
+        ]
+    },
+    {
+        "id": "cq-blood-meridian",
+        "title": "Blood Meridian",
+        "author": "Cormac McCarthy",
+        "year": 1985,
+        "type": "Novel",
+        "genres": [
+            "Literary Fiction"
+        ],
+        "subgenres": [],
+        "themes": [
+            "Violence",
+            "Mortality"
+        ]
+    },
+    {
+        "id": "cq-house-on-borderland",
+        "title": "The House on the Borderland",
+        "author": "William Hope Hodgson",
+        "year": 1908,
+        "type": "Novel",
+        "genres": [
+            "Horror",
+            "Weird Fiction"
+        ],
+        "subgenres": [
+            "Cosmic Horror"
+        ],
+        "themes": [
+            "Impossible Places",
+            "Reality Breakdown"
+        ]
+    },
+    {
+        "id": "cq-foucaults-pendulum",
+        "title": "Foucault's Pendulum",
+        "author": "Umberto Eco",
+        "year": 1988,
+        "type": "Novel",
+        "genres": [
+            "Literary Fiction"
+        ],
+        "subgenres": [
+            "Occult"
+        ],
+        "themes": [
+            "Secret Knowledge",
+            "Conspiracy",
+            "Occult Systems"
+        ]
+    },
+    {
+        "id": "cq-divine-farce",
+        "title": "The Divine Farce",
+        "author": "Michael S. A. Graziano",
+        "year": 2009,
+        "type": "Novella",
+        "genres": [
+            "Speculative Fiction"
+        ],
+        "subgenres": [],
+        "themes": [
+            "Strange Afterlife",
+            "Philosophical Horror"
+        ]
+    }
+]
