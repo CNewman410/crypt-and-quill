@@ -661,6 +661,10 @@ function isCuratedTitleFocusedQuery(
     curatedMatches
 ) {
 
+    const normalizedQuery =
+        normalizeSearchText(query);
+
+
     const queryWords =
         getSearchWords(query);
 
@@ -675,6 +679,12 @@ function isCuratedTitleFocusedQuery(
     return curatedMatches.some(
         (work) => {
 
+            const normalizedTitle =
+                normalizeSearchText(
+                    work.title
+                );
+
+
             const titleWords =
                 getSearchWords(
                     work.title
@@ -685,6 +695,25 @@ function isCuratedTitleFocusedQuery(
                 titleWords.length === 0
             ) {
                 return false;
+            }
+
+
+            /*
+             * Strongest case:
+             *
+             * The complete curated title appears
+             * inside the search.
+             *
+             * Example:
+             *
+             * "The Jaunt Stephen King"
+             */
+            if (
+                normalizedQuery.includes(
+                    normalizedTitle
+                )
+            ) {
+                return true;
             }
 
 
@@ -705,14 +734,8 @@ function isCuratedTitleFocusedQuery(
                 titleWords.length;
 
 
-            const queryCoverage =
-                matchingTitleWords.length /
-                queryWords.length;
-
-
             return (
-                titleCoverage >= 0.75 &&
-                queryCoverage >= 0.4
+                titleCoverage >= 0.75
             );
 
         }
