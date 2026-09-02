@@ -1,21 +1,948 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="description"
+        content="Discover horror, Gothic literature, weird fiction, dark science fiction, supernatural fiction, and other strange literature in the Crypt & Quill archive."
+    >
 
     <title>Discover | Crypt & Quill</title>
+
+    <link
+        rel="stylesheet"
+        href="assets/css/styles.css"
+    >
 </head>
+
 
 <body>
 
-    <h1>Discover</h1>
+    <!-- ========================================
+         SITE HEADER
+         ======================================== -->
 
-    <p>Search the Crypt & Quill archive.</p>
+    <header class="site-header">
 
-    <p>
-        <a href="index.html">Home</a>
-    </p>
+        <div class="site-header-inner">
+
+            <a
+                class="site-brand"
+                href="index.html"
+            >
+                <span class="brand-name">
+                    Crypt &amp; Quill
+                </span>
+
+                <span class="brand-tagline">
+                    A Library of Strange &amp; Unsettling Literature
+                </span>
+            </a>
+
+
+            <nav
+                class="main-navigation"
+                aria-label="Main navigation"
+            >
+
+                <a
+                    class="nav-link"
+                    href="index.html"
+                >
+                    Home
+                </a>
+
+                <a
+                    class="nav-link active"
+                    href="discover.html"
+                >
+                    Discover
+                </a>
+
+                <span class="nav-link nav-link-disabled">
+                    My Library
+                </span>
+
+                <span class="nav-link nav-link-disabled">
+                    Reviews
+                </span>
+
+                <span class="nav-link nav-link-disabled">
+                    Lists
+                </span>
+
+            </nav>
+
+        </div>
+
+    </header>
+
+
+
+    <!-- ========================================
+         MAIN CONTENT
+         ======================================== -->
+
+    <main>
+
+
+        <!-- DISCOVER HERO -->
+
+        <section class="discover-hero">
+
+            <div class="discover-hero-inner">
+
+                <p class="eyebrow">
+                    Search the collection
+                </p>
+
+                <h1>
+                    Discover the Archive
+                </h1>
+
+                <p class="discover-intro">
+                    Search strange books, short stories, authors, collections,
+                    and unsettling corners of literature.
+                </p>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- SEARCH + FILTERS -->
+
+        <section class="discover-tools">
+
+            <div class="discover-tools-inner">
+
+
+                <!-- SEARCH -->
+
+                <form
+                    class="discover-search"
+                    id="discover-search-form"
+                >
+
+                    <label
+                        class="visually-hidden"
+                        for="discover-search-input"
+                    >
+                        Search Crypt &amp; Quill
+                    </label>
+
+                    <input
+                        id="discover-search-input"
+                        class="discover-search-input"
+                        type="search"
+                        placeholder="Search title, author, series, or keyword..."
+                        autocomplete="off"
+                    >
+
+                    <button
+                        class="button button-primary discover-search-button"
+                        type="submit"
+                    >
+                        Search
+                    </button>
+
+                </form>
+
+
+
+                <!-- FILTERS -->
+
+                <div class="filter-panel">
+
+                    <div class="filter-heading">
+
+                        <div>
+
+                            <p class="filter-label">
+                                Refine the archive
+                            </p>
+
+                            <h2>
+                                Filters
+                            </h2>
+
+                        </div>
+
+
+                        <button
+                            class="clear-filters-button"
+                            id="clear-filters-button"
+                            type="button"
+                        >
+                            Clear Filters
+                        </button>
+
+                    </div>
+
+
+                    <div class="filter-grid">
+
+
+                        <!-- GENRE -->
+
+                        <div class="filter-group">
+
+                            <label for="genre-filter">
+                                Genre
+                            </label>
+
+                            <select
+                                id="genre-filter"
+                                class="filter-select"
+                            >
+                                <option value="">
+                                    All Genres
+                                </option>
+
+                                <option value="horror">
+                                    Horror
+                                </option>
+
+                                <option value="gothic">
+                                    Gothic
+                                </option>
+
+                                <option value="weird-fiction">
+                                    Weird Fiction
+                                </option>
+
+                                <option value="science-fiction">
+                                    Science Fiction
+                                </option>
+
+                                <option value="dark-fantasy">
+                                    Dark Fantasy
+                                </option>
+
+                                <option value="supernatural">
+                                    Supernatural
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+
+                        <!-- SUBGENRE -->
+
+                        <div class="filter-group">
+
+                            <label for="subgenre-filter">
+                                Subgenre
+                            </label>
+
+                            <select
+                                id="subgenre-filter"
+                                class="filter-select"
+                            >
+                                <option value="">
+                                    All Subgenres
+                                </option>
+
+                                <option value="cosmic-horror">
+                                    Cosmic Horror
+                                </option>
+
+                                <option value="folk-horror">
+                                    Folk Horror
+                                </option>
+
+                                <option value="occult">
+                                    Occult
+                                </option>
+
+                                <option value="ghost-stories">
+                                    Ghost Stories
+                                </option>
+
+                                <option value="haunted-house">
+                                    Haunted House
+                                </option>
+
+                                <option value="witchcraft">
+                                    Witchcraft
+                                </option>
+
+                                <option value="psychological-horror">
+                                    Psychological Horror
+                                </option>
+
+                                <option value="literary-horror">
+                                    Literary Horror
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+
+                        <!-- WORK TYPE -->
+
+                        <div class="filter-group">
+
+                            <label for="type-filter">
+                                Work Type
+                            </label>
+
+                            <select
+                                id="type-filter"
+                                class="filter-select"
+                            >
+                                <option value="">
+                                    All Types
+                                </option>
+
+                                <option value="novel">
+                                    Novel
+                                </option>
+
+                                <option value="novella">
+                                    Novella
+                                </option>
+
+                                <option value="short-story">
+                                    Short Story
+                                </option>
+
+                                <option value="collection">
+                                    Collection
+                                </option>
+
+                                <option value="anthology">
+                                    Anthology
+                                </option>
+
+                                <option value="nonfiction">
+                                    Nonfiction
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+
+                        <!-- YEAR -->
+
+                        <div class="filter-group">
+
+                            <label for="year-filter">
+                                Publication
+                            </label>
+
+                            <select
+                                id="year-filter"
+                                class="filter-select"
+                            >
+                                <option value="">
+                                    Any Year
+                                </option>
+
+                                <option value="pre-1900">
+                                    Before 1900
+                                </option>
+
+                                <option value="1900-1949">
+                                    1900–1949
+                                </option>
+
+                                <option value="1950-1979">
+                                    1950–1979
+                                </option>
+
+                                <option value="1980-1999">
+                                    1980–1999
+                                </option>
+
+                                <option value="2000-2019">
+                                    2000–2019
+                                </option>
+
+                                <option value="2020-present">
+                                    2020–Present
+                                </option>
+
+                            </select>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- RESULTS -->
+
+        <section class="discover-results-section">
+
+            <div class="discover-results-inner">
+
+
+                <!-- RESULTS HEADER -->
+
+                <div class="results-heading">
+
+                    <div>
+
+                        <p class="section-kicker">
+                            From the shelves
+                        </p>
+
+                        <h2>
+                            Browse the Archive
+                        </h2>
+
+                    </div>
+
+
+                    <div class="results-controls">
+
+                        <p
+                            class="results-count"
+                            id="results-count"
+                        >
+                            8 works
+                        </p>
+
+
+                        <label
+                            class="visually-hidden"
+                            for="sort-results"
+                        >
+                            Sort results
+                        </label>
+
+                        <select
+                            id="sort-results"
+                            class="sort-select"
+                        >
+                            <option value="featured">
+                                Featured
+                            </option>
+
+                            <option value="title">
+                                Title A–Z
+                            </option>
+
+                            <option value="author">
+                                Author A–Z
+                            </option>
+
+                            <option value="newest">
+                                Newest First
+                            </option>
+
+                            <option value="oldest">
+                                Oldest First
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- STATUS MESSAGE -->
+
+                <div
+                    class="discover-status"
+                    id="discover-status"
+                    hidden
+                >
+                    Searching the archive...
+                </div>
+
+
+
+                <!-- RESULT GRID -->
+
+                <div
+                    class="work-grid"
+                    id="work-grid"
+                >
+
+
+                    <!-- THE LIBRARY OF BABEL -->
+
+                    <article class="work-card">
+
+                        <div class="work-card-cover">
+
+                            <div class="cover-placeholder">
+                                <span>
+                                    Cover
+                                </span>
+                            </div>
+
+                        </div>
+
+
+                        <div class="work-card-content">
+
+                            <p class="work-card-type">
+                                Short Story
+                            </p>
+
+                            <h3>
+                                The Library of Babel
+                            </h3>
+
+                            <p class="work-card-author">
+                                Jorge Luis Borges
+                            </p>
+
+                            <p class="work-card-year">
+                                1941
+                            </p>
+
+
+                            <div class="work-card-tags">
+
+                                <span>
+                                    Weird Fiction
+                                </span>
+
+                                <span>
+                                    Impossible Places
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                    </article>
+
+
+
+                    <!-- THE KING IN YELLOW -->
+
+                    <article class="work-card">
+
+                        <div class="work-card-cover">
+
+                            <div class="cover-placeholder">
+                                <span>
+                                    Cover
+                                </span>
+                            </div>
+
+                        </div>
+
+
+                        <div class="work-card-content">
+
+                            <p class="work-card-type">
+                                Collection
+                            </p>
+
+                            <h3>
+                                The King in Yellow
+                            </h3>
+
+                            <p class="work-card-author">
+                                Robert W. Chambers
+                            </p>
+
+                            <p class="work-card-year">
+                                1895
+                            </p>
+
+
+                            <div class="work-card-tags">
+
+                                <span>
+                                    Weird Fiction
+                                </span>
+
+                                <span>
+                                    Forbidden Knowledge
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                    </article>
+
+
+
+                    <!-- HYPERION -->
+
+                    <article class="work-card">
+
+                        <div class="work-card-cover">
+
+                            <div class="cover-placeholder">
+                                <span>
+                                    Cover
+                                </span>
+                            </div>
+
+                        </div>
+
+
+                        <div class="work-card-content">
+
+                            <p class="work-card-type">
+                                Novel
+                            </p>
+
+                            <h3>
+                                Hyperion
+                            </h3>
+
+                            <p class="work-card-author">
+                                Dan Simmons
+                            </p>
+
+                            <p class="work-card-year">
+                                1989
+                            </p>
+
+
+                            <div class="work-card-tags">
+
+                                <span>
+                                    Science Fiction
+                                </span>
+
+                                <span>
+                                    Cosmic Horror
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                    </article>
+
+
+
+                    <!-- ANTIMEMETICS DIVISION -->
+
+                    <article class="work-card">
+
+                        <div class="work-card-cover">
+
+                            <div class="cover-placeholder">
+                                <span>
+                                    Cover
+                                </span>
+                            </div>
+
+                        </div>
+
+
+                        <div class="work-card-content">
+
+                            <p class="work-card-type">
+                                Novel
+                            </p>
+
+                            <h3>
+                                There Is No Antimemetics Division
+                            </h3>
+
+                            <p class="work-card-author">
+                                qntm
+                            </p>
+
+                            <p class="work-card-year">
+                                2020
+                            </p>
+
+
+                            <div class="work-card-tags">
+
+                                <span>
+                                    Cosmic Horror
+                                </span>
+
+                                <span>
+                                    Memory
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                    </article>
+
+
+
+                    <!-- BLOOD MERIDIAN -->
+
+                    <article class="work-card">
+
+                        <div class="work-card-cover">
+
+                            <div class="cover-placeholder">
+                                <span>
+                                    Cover
+                                </span>
+                            </div>
+
+                        </div>
+
+
+                        <div class="work-card-content">
+
+                            <p class="work-card-type">
+                                Novel
+                            </p>
+
+                            <h3>
+                                Blood Meridian
+                            </h3>
+
+                            <p class="work-card-author">
+                                Cormac McCarthy
+                            </p>
+
+                            <p class="work-card-year">
+                                1985
+                            </p>
+
+
+                            <div class="work-card-tags">
+
+                                <span>
+                                    Literary Horror
+                                </span>
+
+                                <span>
+                                    Violence
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                    </article>
+
+
+
+                    <!-- HOUSE ON THE BORDERLAND -->
+
+                    <article class="work-card">
+
+                        <div class="work-card-cover">
+
+                            <div class="cover-placeholder">
+                                <span>
+                                    Cover
+                                </span>
+                            </div>
+
+                        </div>
+
+
+                        <div class="work-card-content">
+
+                            <p class="work-card-type">
+                                Novel
+                            </p>
+
+                            <h3>
+                                The House on the Borderland
+                            </h3>
+
+                            <p class="work-card-author">
+                                William Hope Hodgson
+                            </p>
+
+                            <p class="work-card-year">
+                                1908
+                            </p>
+
+
+                            <div class="work-card-tags">
+
+                                <span>
+                                    Cosmic Horror
+                                </span>
+
+                                <span>
+                                    Impossible Places
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                    </article>
+
+
+
+                    <!-- FOUCAULT'S PENDULUM -->
+
+                    <article class="work-card">
+
+                        <div class="work-card-cover">
+
+                            <div class="cover-placeholder">
+                                <span>
+                                    Cover
+                                </span>
+                            </div>
+
+                        </div>
+
+
+                        <div class="work-card-content">
+
+                            <p class="work-card-type">
+                                Novel
+                            </p>
+
+                            <h3>
+                                Foucault's Pendulum
+                            </h3>
+
+                            <p class="work-card-author">
+                                Umberto Eco
+                            </p>
+
+                            <p class="work-card-year">
+                                1988
+                            </p>
+
+
+                            <div class="work-card-tags">
+
+                                <span>
+                                    Occult
+                                </span>
+
+                                <span>
+                                    Secret Knowledge
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                    </article>
+
+
+
+                    <!-- DIVINE FARCE -->
+
+                    <article class="work-card">
+
+                        <div class="work-card-cover">
+
+                            <div class="cover-placeholder">
+                                <span>
+                                    Cover
+                                </span>
+                            </div>
+
+                        </div>
+
+
+                        <div class="work-card-content">
+
+                            <p class="work-card-type">
+                                Novella
+                            </p>
+
+                            <h3>
+                                The Divine Farce
+                            </h3>
+
+                            <p class="work-card-author">
+                                Michael S. A. Graziano
+                            </p>
+
+                            <p class="work-card-year">
+                                2009
+                            </p>
+
+
+                            <div class="work-card-tags">
+
+                                <span>
+                                    Strange Afterlife
+                                </span>
+
+                                <span>
+                                    Philosophical Horror
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                    </article>
+
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+
+    <!-- ========================================
+         FOOTER
+         ======================================== -->
+
+    <footer class="site-footer">
+
+        <div class="site-footer-inner">
+
+            <div>
+
+                <p class="footer-brand">
+                    Crypt &amp; Quill
+                </p>
+
+                <p class="footer-description">
+                    A curated archive of strange and unsettling literature.
+                </p>
+
+            </div>
+
+
+            <p class="footer-note">
+                The archive is still being assembled.
+            </p>
+
+        </div>
+
+    </footer>
+
+
+
+    <script src="assets/js/common.js"></script>
+    <script src="assets/js/discover.js"></script>
 
 </body>
+
 </html>
