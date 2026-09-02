@@ -1778,3 +1778,27 @@ img {
     }
 
 }
+
+/* ========================================
+   REAL BOOK COVERS
+   ======================================== */
+
+.work-cover-image {
+
+    width: 100%;
+
+    aspect-ratio: 2 / 3;
+
+    display: block;
+
+    object-fit: cover;
+
+    background:
+        linear-gradient(
+            145deg,
+            #2c2223,
+            #171313
+        );
+
+    border: 1px solid var(--border-light);
+}
