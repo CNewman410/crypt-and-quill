@@ -378,6 +378,12 @@ function enrichCuratedWorkFromOpenLibrary(
     openLibraryResults
 ) {
 
+    /*
+     * Best canonical Open Library match.
+     *
+     * We use this for IDs and bibliographic
+     * relationships.
+     */
     const bestMatch =
         findBestOpenLibraryMatch(
             curatedWork,
@@ -385,13 +391,18 @@ function enrichCuratedWorkFromOpenLibrary(
         );
 
 
-    if (!bestMatch) {
-
-        return {
-            ...curatedWork
-        };
-
-    }
+    /*
+     * Cover selection is handled separately.
+     *
+     * A perfect bibliographic match may not have
+     * a cover while another legitimate edition
+     * of the same work does.
+     */
+    const bestCoverMatch =
+        findBestOpenLibraryCoverMatch(
+            curatedWork,
+            openLibraryResults
+        );
 
 
     return {
@@ -399,30 +410,234 @@ function enrichCuratedWorkFromOpenLibrary(
         ...curatedWork,
 
         coverId:
-            bestMatch.coverId ||
-            curatedWork.coverId,
+            bestCoverMatch?.coverId ||
+            curatedWork.coverId ||
+            null,
 
         openLibraryKey:
-            bestMatch.openLibraryKey ||
+            bestMatch?.openLibraryKey ||
             null,
 
         authorKeys:
-            bestMatch.authorKeys || [],
+            bestMatch?.authorKeys ||
+            [],
 
         subjects:
-            bestMatch.subjects || [],
+            bestMatch?.subjects ||
+            [],
 
         editionCount:
-            bestMatch.editionCount || null,
+            bestMatch?.editionCount ||
+            null,
 
         matchedOpenLibraryKey:
-            bestMatch.openLibraryKey || null
+            bestMatch?.openLibraryKey ||
+            null
 
     };
 
 }
 
+/**
+ * Find the strongest legitimate Open Library
+ * edition that also has a cover.
+ *
+ * This is intentionally separate from canonical
+ * record matching.
+ */
+function findBestOpenLibraryCoverMatch(
+    curatedWork,
+    openLibraryResults
+) {
 
+    let bestMatch = null;
+
+    let bestScore = 0;
+
+
+    openLibraryResults.forEach(
+        (candidate) => {
+
+            if (
+                !candidate.coverId
+            ) {
+                return;
+            }
+
+
+            const score =
+                scoreOpenLibraryCoverMatch(
+                    curatedWork,
+                    candidate
+                );
+
+
+            if (
+                score > bestScore
+            ) {
+
+                bestScore =
+                    score;
+
+                bestMatch =
+                    candidate;
+
+            }
+
+        }
+    );
+
+
+    if (
+        bestScore < 75
+    ) {
+        return null;
+    }
+
+
+    return bestMatch;
+
+}
+
+/**
+ * Cover matching is intentionally more tolerant
+ * than canonical work matching.
+ *
+ * We want legitimate alternate editions of the
+ * same work to be eligible for cover art.
+ */
+function scoreOpenLibraryCoverMatch(
+    curatedWork,
+    candidate
+) {
+
+    const curatedTitle =
+        normalizeSearchText(
+            curatedWork.title
+        );
+
+    const candidateTitle =
+        normalizeSearchText(
+            candidate.title
+        );
+
+
+    const curatedAuthor =
+        normalizeSearchText(
+            curatedWork.author
+        );
+
+    const candidateAuthor =
+        normalizeSearchText(
+            candidate.author
+        );
+
+
+    let score = 0;
+
+
+    /*
+     * TITLE
+     */
+
+    if (
+        curatedTitle ===
+        candidateTitle
+    ) {
+
+        score += 80;
+
+    }
+    else if (
+        candidateTitle.includes(
+            curatedTitle
+        )
+    ) {
+
+        score += 60;
+
+    }
+    else {
+
+        score +=
+            getWordOverlapRatio(
+                curatedTitle,
+                candidateTitle
+            ) * 45;
+
+    }
+
+
+    /*
+     * AUTHOR
+     */
+
+    if (
+        curatedAuthor ===
+        candidateAuthor
+    ) {
+
+        score += 50;
+
+    }
+    else if (
+        candidateAuthor.includes(
+            curatedAuthor
+        )
+    ) {
+
+        score += 35;
+
+    }
+    else {
+
+        score +=
+            getWordOverlapRatio(
+                curatedAuthor,
+                candidateAuthor
+            ) * 20;
+
+    }
+
+
+    /*
+     * Slightly prefer an edition close to the
+     * canonical publication period, but don't
+     * require it.
+     */
+    if (
+        curatedWork.year &&
+        candidate.year
+    ) {
+
+        const difference =
+            Math.abs(
+                curatedWork.year -
+                candidate.year
+            );
+
+
+        if (
+            difference === 0
+        ) {
+
+            score += 8;
+
+        }
+        else if (
+            difference <= 10
+        ) {
+
+            score += 4;
+
+        }
+
+    }
+
+
+    return score;
+
+}
 
 /**
  * Find the strongest Open Library record for a
