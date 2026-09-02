@@ -14,7 +14,10 @@
             "Infinity",
             "Forbidden Knowledge"
         ],
-        "featured": true
+        "searchAliases": [
+            "Library of Babel"
+        ],
+        "relationships": {}
     },
     {
         "id": "cq-king-in-yellow",
@@ -32,7 +35,11 @@
         "themes": [
             "Forbidden Knowledge",
             "Reality Breakdown"
-        ]
+        ],
+        "searchAliases": [
+            "King in Yellow"
+        ],
+        "relationships": {}
     },
     {
         "id": "cq-hyperion",
@@ -50,7 +57,9 @@
             "Time",
             "Religion",
             "Identity"
-        ]
+        ],
+        "searchAliases": [],
+        "relationships": {}
     },
     {
         "id": "cq-antimemetics",
@@ -69,7 +78,44 @@
             "Memory",
             "Identity",
             "Reality Breakdown"
-        ]
+        ],
+        "searchAliases": [
+            "Antimemetics Division",
+            "There is no Antimemetics Division"
+        ],
+        "relationships": {}
+    },
+    {
+        "id": "cq-the-jaunt",
+        "title": "The Jaunt",
+        "author": "Stephen King",
+        "year": 1981,
+        "type": "Short Story",
+        "genres": [
+            "Horror",
+            "Science Fiction"
+        ],
+        "subgenres": [
+            "Cosmic Horror"
+        ],
+        "themes": [
+            "Teleportation",
+            "Time",
+            "Isolation",
+            "Existential Horror"
+        ],
+        "searchAliases": [
+            "Jaunt"
+        ],
+        "relationships": {
+            "appearsIn": [
+                {
+                    "title": "Skeleton Crew",
+                    "author": "Stephen King",
+                    "year": 1985
+                }
+            ]
+        }
     },
     {
         "id": "cq-blood-meridian",
@@ -84,7 +130,9 @@
         "themes": [
             "Violence",
             "Mortality"
-        ]
+        ],
+        "searchAliases": [],
+        "relationships": {}
     },
     {
         "id": "cq-house-on-borderland",
@@ -102,7 +150,11 @@
         "themes": [
             "Impossible Places",
             "Reality Breakdown"
-        ]
+        ],
+        "searchAliases": [
+            "House on the Borderland"
+        ],
+        "relationships": {}
     },
     {
         "id": "cq-foucaults-pendulum",
@@ -120,7 +172,11 @@
             "Secret Knowledge",
             "Conspiracy",
             "Occult Systems"
-        ]
+        ],
+        "searchAliases": [
+            "Foucaults Pendulum"
+        ],
+        "relationships": {}
     },
     {
         "id": "cq-divine-farce",
@@ -135,6 +191,10 @@
         "themes": [
             "Strange Afterlife",
             "Philosophical Horror"
-        ]
+        ],
+        "searchAliases": [
+            "Divine Farce"
+        ],
+        "relationships": {}
     }
 ]
