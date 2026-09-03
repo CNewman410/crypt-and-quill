@@ -270,7 +270,7 @@
 
 
 
-                    <!-- PERSONAL TOOLS PREVIEW -->
+                    <!-- PERSONAL LIBRARY -->
 
                     <section class="details-section">
 
@@ -288,31 +288,38 @@
                             <button
                                 class="details-action-button"
                                 type="button"
-                                disabled
+                                data-reading-status="want-to-read"
+                                aria-pressed="false"
                             >
                                 Want to Read
                             </button>
 
+
                             <button
                                 class="details-action-button"
                                 type="button"
-                                disabled
+                                data-reading-status="currently-reading"
+                                aria-pressed="false"
                             >
                                 Currently Reading
                             </button>
 
-                            <button
-                                class="details-action-button"
-                                type="button"
-                                disabled
-                            >
-                                Read
-                            </button>
 
                             <button
                                 class="details-action-button"
                                 type="button"
-                                disabled
+                                data-reading-status="read"
+                                aria-pressed="false"
+                            >
+                                Read
+                            </button>
+
+
+                            <button
+                                class="details-action-button"
+                                id="favorite-button"
+                                type="button"
+                                aria-pressed="false"
                             >
                                 Favorite
                             </button>
@@ -320,8 +327,12 @@
                         </div>
 
 
-                        <p class="details-coming-soon">
-                            Personal library tools will be added in the next phase.
+                        <p
+                            class="details-library-status"
+                            id="library-status-message"
+                            aria-live="polite"
+                        >
+                            This work has not been added to your personal library.
                         </p>
 
                     </section>
@@ -444,6 +455,8 @@
     <script src="assets/js/catalog.js"></script>
 
     <script src="assets/js/openlibrary-api.js"></script>
+
+    <script src="assets/js/storage.js"></script>
 
     <script src="assets/js/work-details.js"></script>
 
