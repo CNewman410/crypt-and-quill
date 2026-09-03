@@ -2548,3 +2548,56 @@ img {
     }
 
 }
+
+/* ========================================
+   PERSONAL LIBRARY ACTIVE STATES
+   ======================================== */
+
+.details-action-button {
+
+    cursor: pointer;
+
+    transition:
+        background var(--transition),
+        border-color var(--transition),
+        color var(--transition);
+}
+
+
+.details-action-button:hover {
+
+    border-color: var(--gold-soft);
+
+    color: var(--parchment);
+}
+
+
+.details-action-button.active {
+
+    background: var(--burgundy);
+
+    border-color: var(--burgundy-light);
+
+    color: #f5ede1;
+}
+
+
+.details-action-button.active:hover {
+
+    background: var(--burgundy-light);
+}
+
+
+.details-library-status {
+
+    margin: 14px 0 0;
+
+    color: var(--text-muted);
+
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+
+    font-size: 0.76rem;
+}
