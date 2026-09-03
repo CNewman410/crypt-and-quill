@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="description"
+        content="Your personal Crypt & Quill reading library."
+    >
+
+    <title>My Library | Crypt & Quill</title>
+
+    <link
+        rel="stylesheet"
+        href="assets/css/styles.css"
+    >
+
+</head>
+
+
+<body>
+
+    <!-- ========================================
+         SITE HEADER
+         ======================================== -->
+
+    <header class="site-header">
+
+        <div class="site-header-inner">
+
+            <a
+                class="site-brand"
+                href="index.html"
+            >
+
+                <span class="brand-name">
+                    Crypt &amp; Quill
+                </span>
+
+                <span class="brand-tagline">
+                    A Library of Strange &amp; Unsettling Literature
+                </span>
+
+            </a>
+
+
+            <nav
+                class="main-navigation"
+                aria-label="Main navigation"
+            >
+
+                <a
+                    class="nav-link"
+                    href="index.html"
+                >
+                    Home
+                </a>
+
+                <a
+                    class="nav-link"
+                    href="discover.html"
+                >
+                    Discover
+                </a>
+
+                <a
+                    class="nav-link active"
+                    href="my-library.html"
+                >
+                    My Library
+                </a>
+
+                <span class="nav-link nav-link-disabled">
+                    Reviews
+                </span>
+
+                <span class="nav-link nav-link-disabled">
+                    Lists
+                </span>
+
+            </nav>
+
+        </div>
+
+    </header>
+
+
+
+    <!-- ========================================
+         MAIN
+         ======================================== -->
+
+    <main>
+
+
+        <!-- PAGE HERO -->
+
+        <section class="library-hero">
+
+            <div class="library-hero-inner">
+
+                <p class="eyebrow">
+                    Personal Archive
+                </p>
+
+                <h1>
+                    My Library
+                </h1>
+
+                <p class="library-hero-description">
+                    Your saved works, current reads, finished books,
+                    and favorites from across the Crypt &amp; Quill archive.
+                </p>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- LIBRARY CONTROLS -->
+
+        <section class="library-controls-section">
+
+            <div class="library-controls-inner">
+
+
+                <!-- FILTERS -->
+
+                <div
+                    class="library-filter-group"
+                    role="group"
+                    aria-label="Filter personal library"
+                >
+
+                    <button
+                        class="library-filter-button active"
+                        type="button"
+                        data-library-filter="all"
+                    >
+                        All
+                    </button>
+
+                    <button
+                        class="library-filter-button"
+                        type="button"
+                        data-library-filter="want-to-read"
+                    >
+                        Want to Read
+                    </button>
+
+                    <button
+                        class="library-filter-button"
+                        type="button"
+                        data-library-filter="currently-reading"
+                    >
+                        Currently Reading
+                    </button>
+
+                    <button
+                        class="library-filter-button"
+                        type="button"
+                        data-library-filter="read"
+                    >
+                        Read
+                    </button>
+
+                    <button
+                        class="library-filter-button"
+                        type="button"
+                        data-library-filter="favorites"
+                    >
+                        Favorites
+                    </button>
+
+                </div>
+
+
+
+                <!-- SORT -->
+
+                <div class="library-sort-group">
+
+                    <label for="library-sort">
+                        Sort
+                    </label>
+
+                    <select
+                        id="library-sort"
+                        class="sort-select"
+                    >
+
+                        <option value="recent">
+                            Recently Updated
+                        </option>
+
+                        <option value="title">
+                            Title A–Z
+                        </option>
+
+                        <option value="author">
+                            Author A–Z
+                        </option>
+
+                        <option value="newest">
+                            Newest Publication
+                        </option>
+
+                        <option value="oldest">
+                            Oldest Publication
+                        </option>
+
+                    </select>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- LIBRARY CONTENT -->
+
+        <section class="library-results-section">
+
+            <div class="library-results-inner">
+
+
+                <!-- HEADING -->
+
+                <div class="library-results-heading">
+
+                    <div>
+
+                        <p class="section-kicker">
+                            From your shelves
+                        </p>
+
+                        <h2 id="library-section-title">
+                            All Saved Works
+                        </h2>
+
+                    </div>
+
+
+                    <p
+                        class="library-results-count"
+                        id="library-results-count"
+                    >
+                        0 works
+                    </p>
+
+                </div>
+
+
+
+                <!-- EMPTY STATE -->
+
+                <div
+                    class="library-empty-state"
+                    id="library-empty-state"
+                    hidden
+                >
+
+                    <p class="library-empty-symbol">
+                        ◈
+                    </p>
+
+                    <h3>
+                        Your shelves are empty.
+                    </h3>
+
+                    <p id="library-empty-message">
+                        Save works from the archive to begin building your personal library.
+                    </p>
+
+                    <a
+                        class="button button-primary"
+                        href="discover.html"
+                    >
+                        Explore the Archive
+                    </a>
+
+                </div>
+
+
+
+                <!-- WORK GRID -->
+
+                <div
+                    class="library-work-grid"
+                    id="library-work-grid"
+                >
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+
+    <!-- ========================================
+         FOOTER
+         ======================================== -->
+
+    <footer class="site-footer">
+
+        <div class="site-footer-inner">
+
+            <div>
+
+                <p class="footer-brand">
+                    Crypt &amp; Quill
+                </p>
+
+                <p class="footer-description">
+                    A curated archive of strange and unsettling literature.
+                </p>
+
+            </div>
+
+
+            <p class="footer-note">
+                The archive is still being assembled.
+            </p>
+
+        </div>
+
+    </footer>
+
+
+
+    <!-- ========================================
+         SCRIPTS
+         ======================================== -->
+
+    <script src="assets/js/common.js"></script>
+
+    <script src="assets/js/storage.js"></script>
+
+    <script src="assets/js/my-library.js"></script>
+
+</body>
+
+</html>
