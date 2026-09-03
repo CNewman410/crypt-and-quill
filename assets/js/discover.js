@@ -49,16 +49,69 @@ const clearFiltersButton =
     );
 
 
+const genreFilter =
+    document.getElementById(
+        "genre-filter"
+    );
+
+const subgenreFilter =
+    document.getElementById(
+        "subgenre-filter"
+    );
+
+const typeFilter =
+    document.getElementById(
+        "type-filter"
+    );
+
+const yearFilter =
+    document.getElementById(
+        "year-filter"
+    );
+
+const sortSelect =
+    document.getElementById(
+        "sort-results"
+    );
+
+
 
 /* ========================================
    PAGE STATE
    ======================================== */
 
+/*
+ * All curated Crypt & Quill works.
+ */
 let curatedCatalog = [];
 
+
+/*
+ * The complete unfiltered result set currently
+ * available to Discover.
+ *
+ * This may contain:
+ *
+ * - Crypt & Quill curated works
+ * - Open Library results
+ */
 let currentWorks = [];
 
+
+/*
+ * Full Open Library response after cleanup.
+ */
 let lastOpenLibraryResults = [];
+
+
+/*
+ * Tracks whether we're currently viewing:
+ *
+ * "curated"
+ * or
+ * "search"
+ */
+let currentViewMode = "curated";
 
 
 
@@ -90,9 +143,11 @@ async function initializeDiscover() {
         ];
 
 
-        renderWorks(
-            currentWorks
-        );
+        currentViewMode =
+            "curated";
+
+
+        applyFiltersAndSort();
 
 
         hideStatus();
@@ -149,9 +204,12 @@ async function handleSearch(event) {
     );
 
 
-    workGrid.innerHTML = "";
+    workGrid.innerHTML =
+        "";
 
-    resultsCount.textContent = "";
+
+    resultsCount.textContent =
+        "";
 
 
     try {
@@ -159,7 +217,7 @@ async function handleSearch(event) {
         /*
          * STEP 1
          *
-         * Search our own curated collection first.
+         * Search Crypt & Quill's own metadata.
          */
         const curatedMatches =
             findCuratedMatches(
@@ -183,10 +241,10 @@ async function handleSearch(event) {
         /*
          * STEP 3
          *
-         * Enrich curated results with Open Library
-         * metadata such as covers and work IDs.
+         * Enrich curated results with useful
+         * Open Library metadata.
          *
-         * Our canonical metadata remains untouched.
+         * Crypt & Quill remains canonical.
          */
         const enrichedCuratedMatches =
             curatedMatches.map(
@@ -204,7 +262,7 @@ async function handleSearch(event) {
         /*
          * STEP 4
          *
-         * Clean Open Library results.
+         * Remove obvious Open Library noise.
          */
         const cleanedExternalResults =
             cleanOpenLibraryResults(
@@ -215,8 +273,11 @@ async function handleSearch(event) {
 
 
         /*
-         * Keep the full cleaned result pool available
-         * internally for future sorting/filtering.
+         * Keep the complete result pool.
+         *
+         * Filters operate on this entire array,
+         * including external results we aren't
+         * initially displaying.
          */
         currentWorks = [
             ...enrichedCuratedMatches,
@@ -224,44 +285,15 @@ async function handleSearch(event) {
         ];
 
 
-        /*
-         * We don't need to overwhelm the page with all
-         * external results immediately.
-         */
-        const visibleExternalResults =
-            cleanedExternalResults.slice(
-                0,
-                MAX_EXTERNAL_RESULTS_TO_DISPLAY
-            );
+        currentViewMode =
+            "search";
 
 
-        const visibleWorks = [
-            ...enrichedCuratedMatches,
-            ...visibleExternalResults
-        ];
-
-
-        const totalAvailable =
-            enrichedCuratedMatches.length +
-            cleanedExternalResults.length;
-
-
-        const countLabel =
-            createSearchCountLabel(
-                visibleWorks.length,
-                totalAvailable,
-                enrichedCuratedMatches.length
-            );
-
-
-        renderWorks(
-            visibleWorks,
-            countLabel
-        );
+        applyFiltersAndSort();
 
 
         if (
-            visibleWorks.length === 0
+            currentWorks.length === 0
         ) {
 
             showStatus(
@@ -302,9 +334,9 @@ function cleanOpenLibraryResults(
 ) {
 
     /*
-     * Do not show the exact Open Library result
-     * again after we've used it to enrich a
-     * curated Crypt & Quill record.
+     * Do not show the exact Open Library record
+     * again after we've already used it to enrich
+     * a curated Crypt & Quill work.
      */
     const matchedOpenLibraryKeys =
         new Set(
@@ -332,7 +364,8 @@ function cleanOpenLibraryResults(
 
 
     /*
-     * Remove obvious duplicate title/author pairs.
+     * Remove duplicate normalized title/author
+     * combinations.
      */
     cleanedResults =
         removeDuplicateOpenLibraryWorks(
@@ -341,16 +374,8 @@ function cleanOpenLibraryResults(
 
 
     /*
-     * When the query clearly targets one of our
-     * curated titles, remove unrelated search noise.
-     *
-     * Example:
-     *
-     * "The King in Yellow"
-     *
-     * should not turn into a page full of unrelated
-     * Stephen King books merely because "King" occurs
-     * in the search phrase.
+     * If the search clearly targets a curated
+     * title, remove unrelated Open Library noise.
      */
     const titleFocusedSearch =
         isCuratedTitleFocusedQuery(
@@ -386,8 +411,8 @@ function cleanOpenLibraryResults(
 
 
 /**
- * Remove repeated Open Library works with the same
- * normalized title and author.
+ * Remove repeated Open Library records with the
+ * same normalized title and author.
  */
 function removeDuplicateOpenLibraryWorks(
     works
@@ -449,12 +474,15 @@ function showCuratedArchive() {
     ];
 
 
-    lastOpenLibraryResults = [];
+    lastOpenLibraryResults =
+        [];
 
 
-    renderWorks(
-        currentWorks
-    );
+    currentViewMode =
+        "curated";
+
+
+    applyFiltersAndSort();
 
 
     hideStatus();
@@ -464,39 +492,1070 @@ function showCuratedArchive() {
 
 
 /* ========================================
-   RENDER WORKS
+   FILTER EVENTS
    ======================================== */
 
-function renderWorks(
-    works,
-    countLabel = null
-) {
+genreFilter.addEventListener(
+    "change",
+    applyFiltersAndSort
+);
 
-    workGrid.innerHTML = "";
+
+subgenreFilter.addEventListener(
+    "change",
+    applyFiltersAndSort
+);
+
+
+typeFilter.addEventListener(
+    "change",
+    applyFiltersAndSort
+);
+
+
+yearFilter.addEventListener(
+    "change",
+    applyFiltersAndSort
+);
+
+
+sortSelect.addEventListener(
+    "change",
+    applyFiltersAndSort
+);
+
+
+
+/* ========================================
+   FILTER + SORT PIPELINE
+   ======================================== */
+
+function applyFiltersAndSort() {
+
+    /*
+     * Start with the complete current result set.
+     */
+    let filteredWorks = [
+        ...currentWorks
+    ];
+
+
+    /*
+     * Apply every active filter.
+     */
+    filteredWorks =
+        filteredWorks.filter(
+            matchesGenreFilter
+        );
+
+
+    filteredWorks =
+        filteredWorks.filter(
+            matchesSubgenreFilter
+        );
+
+
+    filteredWorks =
+        filteredWorks.filter(
+            matchesTypeFilter
+        );
+
+
+    filteredWorks =
+        filteredWorks.filter(
+            matchesYearFilter
+        );
+
+
+    /*
+     * Sort only after filtering.
+     */
+    filteredWorks =
+        sortWorks(
+            filteredWorks,
+            sortSelect.value
+        );
+
+
+    /*
+     * Keep curated results.
+     *
+     * Limit only external Open Library results
+     * so they don't overwhelm the interface.
+     */
+    const curatedWorks =
+        filteredWorks.filter(
+            (work) => {
+
+                return (
+                    work.source ===
+                    "crypt-and-quill"
+                );
+
+            }
+        );
+
+
+    const externalWorks =
+        filteredWorks.filter(
+            (work) => {
+
+                return (
+                    work.source !==
+                    "crypt-and-quill"
+                );
+
+            }
+        );
+
+
+    const visibleExternalWorks =
+        externalWorks.slice(
+            0,
+            MAX_EXTERNAL_RESULTS_TO_DISPLAY
+        );
+
+
+    /*
+     * Recombine.
+     *
+     * For Featured sorting, curated works stay
+     * first.
+     *
+     * Other sorts will be re-sorted below so
+     * title/year sorting applies across both.
+     */
+    let visibleWorks = [
+        ...curatedWorks,
+        ...visibleExternalWorks
+    ];
 
 
     if (
-        countLabel
+        sortSelect.value !==
+        "featured"
     ) {
 
-        resultsCount.textContent =
-            countLabel;
+        visibleWorks =
+            sortWorks(
+                visibleWorks,
+                sortSelect.value
+            );
+
+    }
+
+
+    renderWorks(
+        visibleWorks
+    );
+
+
+    updateFilteredResultsCount(
+        visibleWorks.length,
+        filteredWorks.length
+    );
+
+
+    /*
+     * Give useful feedback when filters remove
+     * every result.
+     */
+    if (
+        filteredWorks.length === 0 &&
+        currentWorks.length > 0
+    ) {
+
+        showStatus(
+            "No works match the selected filters."
+        );
 
     }
     else {
 
-        updateResultsCount(
-            works.length
+        hideStatus();
+
+    }
+
+}
+
+
+
+/* ========================================
+   GENRE FILTER
+   ======================================== */
+
+function matchesGenreFilter(work) {
+
+    const selectedGenre =
+        genreFilter.value;
+
+
+    if (
+        !selectedGenre
+    ) {
+        return true;
+    }
+
+
+    const selectedText =
+        filterValueToText(
+            selectedGenre
+        );
+
+
+    /*
+     * Curated records use our controlled
+     * vocabulary directly.
+     */
+    if (
+        work.source ===
+        "crypt-and-quill"
+    ) {
+
+        return work.genres.some(
+            (genre) => {
+
+                return (
+                    normalizeSearchText(
+                        genre
+                    ) ===
+                    normalizeSearchText(
+                        selectedText
+                    )
+                );
+
+            }
         );
 
     }
+
+
+    /*
+     * Open Library records do not use our
+     * controlled vocabulary.
+     *
+     * We only allow conservative subject matches.
+     */
+    return openLibrarySubjectsMatchGenre(
+        work,
+        selectedGenre
+    );
+
+}
+
+
+
+/* ========================================
+   SUBGENRE FILTER
+   ======================================== */
+
+function matchesSubgenreFilter(work) {
+
+    const selectedSubgenre =
+        subgenreFilter.value;
+
+
+    if (
+        !selectedSubgenre
+    ) {
+        return true;
+    }
+
+
+    const selectedText =
+        filterValueToText(
+            selectedSubgenre
+        );
+
+
+    /*
+     * Curated works use exact Crypt & Quill
+     * taxonomy.
+     */
+    if (
+        work.source ===
+        "crypt-and-quill"
+    ) {
+
+        return work.subgenres.some(
+            (subgenre) => {
+
+                return (
+                    normalizeSearchText(
+                        subgenre
+                    ) ===
+                    normalizeSearchText(
+                        selectedText
+                    )
+                );
+
+            }
+        );
+
+    }
+
+
+    /*
+     * External records only participate when
+     * Open Library supplied a reasonably
+     * recognizable subject.
+     */
+    return openLibrarySubjectsMatchSubgenre(
+        work,
+        selectedSubgenre
+    );
+
+}
+
+
+
+/* ========================================
+   WORK TYPE FILTER
+   ======================================== */
+
+function matchesTypeFilter(work) {
+
+    const selectedType =
+        typeFilter.value;
+
+
+    if (
+        !selectedType
+    ) {
+        return true;
+    }
+
+
+    /*
+     * Work type is one place where we deliberately
+     * trust Crypt & Quill rather than guessing
+     * from inconsistent Open Library metadata.
+     */
+    if (
+        work.source !==
+        "crypt-and-quill"
+    ) {
+        return false;
+    }
+
+
+    const selectedText =
+        filterValueToText(
+            selectedType
+        );
+
+
+    return (
+        normalizeSearchText(
+            work.type
+        ) ===
+        normalizeSearchText(
+            selectedText
+        )
+    );
+
+}
+
+
+
+/* ========================================
+   PUBLICATION FILTER
+   ======================================== */
+
+function matchesYearFilter(work) {
+
+    const selectedRange =
+        yearFilter.value;
+
+
+    if (
+        !selectedRange
+    ) {
+        return true;
+    }
+
+
+    const year =
+        Number(
+            work.year
+        );
+
+
+    /*
+     * Unknown dates cannot be safely placed into
+     * a publication range.
+     */
+    if (
+        !Number.isFinite(year)
+    ) {
+        return false;
+    }
+
+
+    switch (
+        selectedRange
+    ) {
+
+        case "pre-1900":
+
+            return (
+                year < 1900
+            );
+
+
+        case "1900-1949":
+
+            return (
+                year >= 1900 &&
+                year <= 1949
+            );
+
+
+        case "1950-1979":
+
+            return (
+                year >= 1950 &&
+                year <= 1979
+            );
+
+
+        case "1980-1999":
+
+            return (
+                year >= 1980 &&
+                year <= 1999
+            );
+
+
+        case "2000-2019":
+
+            return (
+                year >= 2000 &&
+                year <= 2019
+            );
+
+
+        case "2020-present":
+
+            return (
+                year >= 2020
+            );
+
+
+        default:
+
+            return true;
+
+    }
+
+}
+
+
+
+/* ========================================
+   OPEN LIBRARY GENRE MAPPING
+   ======================================== */
+
+function openLibrarySubjectsMatchGenre(
+    work,
+    genre
+) {
+
+    const subjects =
+        getNormalizedSubjects(
+            work
+        );
+
+
+    if (
+        subjects.length === 0
+    ) {
+        return false;
+    }
+
+
+    switch (
+        genre
+    ) {
+
+        case "horror":
+
+            return subjectsContainAny(
+                subjects,
+                [
+                    "horror",
+                    "horror fiction",
+                    "horror tales"
+                ]
+            );
+
+
+        case "gothic":
+
+            return subjectsContainAny(
+                subjects,
+                [
+                    "gothic",
+                    "gothic fiction",
+                    "gothic literature"
+                ]
+            );
+
+
+        case "weird-fiction":
+
+            return subjectsContainAny(
+                subjects,
+                [
+                    "weird fiction",
+                    "weird tales"
+                ]
+            );
+
+
+        case "science-fiction":
+
+            return subjectsContainAny(
+                subjects,
+                [
+                    "science fiction",
+                    "science-fiction"
+                ]
+            );
+
+
+        case "dark-fantasy":
+
+            return subjectsContainAny(
+                subjects,
+                [
+                    "dark fantasy"
+                ]
+            );
+
+
+        case "supernatural":
+
+            return subjectsContainAny(
+                subjects,
+                [
+                    "supernatural",
+                    "supernatural fiction"
+                ]
+            );
+
+
+        default:
+
+            return false;
+
+    }
+
+}
+
+
+
+/* ========================================
+   OPEN LIBRARY SUBGENRE MAPPING
+   ======================================== */
+
+function openLibrarySubjectsMatchSubgenre(
+    work,
+    subgenre
+) {
+
+    const subjects =
+        getNormalizedSubjects(
+            work
+        );
+
+
+    if (
+        subjects.length === 0
+    ) {
+        return false;
+    }
+
+
+    switch (
+        subgenre
+    ) {
+
+        case "cosmic-horror":
+
+            return subjectsContainAny(
+                subjects,
+                [
+                    "cosmic horror",
+                    "lovecraftian",
+                    "lovecraftian horror"
+                ]
+            );
+
+
+        case "folk-horror":
+
+            return subjectsContainAny(
+                subjects,
+                [
+                    "folk horror"
+                ]
+            );
+
+
+        case "occult":
+
+            return subjectsContainAny(
+                subjects,
+                [
+                    "occult",
+                    "occult fiction",
+                    "occultism"
+                ]
+            );
+
+
+        case "ghost-stories":
+
+            return subjectsContainAny(
+                subjects,
+                [
+                    "ghost stories",
+                    "ghosts",
+                    "ghost fiction"
+                ]
+            );
+
+
+        case "haunted-house":
+
+            return subjectsContainAny(
+                subjects,
+                [
+                    "haunted house",
+                    "haunted houses"
+                ]
+            );
+
+
+        case "witchcraft":
+
+            return subjectsContainAny(
+                subjects,
+                [
+                    "witchcraft",
+                    "witches"
+                ]
+            );
+
+
+        case "psychological-horror":
+
+            return subjectsContainAny(
+                subjects,
+                [
+                    "psychological horror"
+                ]
+            );
+
+
+        case "literary-horror":
+
+            return subjectsContainAny(
+                subjects,
+                [
+                    "literary horror"
+                ]
+            );
+
+
+        default:
+
+            return false;
+
+    }
+
+}
+
+
+
+/* ========================================
+   SUBJECT UTILITIES
+   ======================================== */
+
+function getNormalizedSubjects(work) {
+
+    if (
+        !Array.isArray(
+            work.subjects
+        )
+    ) {
+        return [];
+    }
+
+
+    return work.subjects
+        .filter(
+            (subject) => {
+
+                return (
+                    typeof subject ===
+                    "string"
+                );
+
+            }
+        )
+        .map(
+            (subject) => {
+
+                return normalizeSearchText(
+                    subject
+                );
+
+            }
+        );
+
+}
+
+
+
+/**
+ * Returns true if any subject contains one of
+ * our approved phrases.
+ */
+function subjectsContainAny(
+    subjects,
+    phrases
+) {
+
+    const normalizedPhrases =
+        phrases.map(
+            normalizeSearchText
+        );
+
+
+    return subjects.some(
+        (subject) => {
+
+            return normalizedPhrases.some(
+                (phrase) => {
+
+                    return (
+                        subject === phrase ||
+                        subject.includes(
+                            phrase
+                        )
+                    );
+
+                }
+            );
+
+        }
+    );
+
+}
+
+
+
+/* ========================================
+   SORTING
+   ======================================== */
+
+function sortWorks(
+    works,
+    sortMethod
+) {
+
+    const sortedWorks = [
+        ...works
+    ];
+
+
+    switch (
+        sortMethod
+    ) {
+
+        case "title":
+
+            sortedWorks.sort(
+                compareTitles
+            );
+
+            break;
+
+
+        case "author":
+
+            sortedWorks.sort(
+                compareAuthors
+            );
+
+            break;
+
+
+        case "newest":
+
+            sortedWorks.sort(
+                compareNewest
+            );
+
+            break;
+
+
+        case "oldest":
+
+            sortedWorks.sort(
+                compareOldest
+            );
+
+            break;
+
+
+        case "featured":
+        default:
+
+            sortedWorks.sort(
+                compareFeatured
+            );
+
+            break;
+
+    }
+
+
+    return sortedWorks;
+
+}
+
+
+
+/**
+ * Featured sorting:
+ *
+ * 1. Crypt & Quill curated works
+ * 2. Open Library discovery results
+ *
+ * Existing relevance order is otherwise kept.
+ */
+function compareFeatured(
+    first,
+    second
+) {
+
+    const firstCurated =
+        first.source ===
+        "crypt-and-quill";
+
+    const secondCurated =
+        second.source ===
+        "crypt-and-quill";
+
+
+    if (
+        firstCurated &&
+        !secondCurated
+    ) {
+        return -1;
+    }
+
+
+    if (
+        !firstCurated &&
+        secondCurated
+    ) {
+        return 1;
+    }
+
+
+    return 0;
+
+}
+
+
+
+function compareTitles(
+    first,
+    second
+) {
+
+    return first.title.localeCompare(
+        second.title,
+        undefined,
+        {
+            sensitivity: "base"
+        }
+    );
+
+}
+
+
+
+function compareAuthors(
+    first,
+    second
+) {
+
+    const authorComparison =
+        first.author.localeCompare(
+            second.author,
+            undefined,
+            {
+                sensitivity: "base"
+            }
+        );
+
+
+    if (
+        authorComparison !== 0
+    ) {
+        return authorComparison;
+    }
+
+
+    return compareTitles(
+        first,
+        second
+    );
+
+}
+
+
+
+function compareNewest(
+    first,
+    second
+) {
+
+    const firstYear =
+        getSortableYear(
+            first.year,
+            -Infinity
+        );
+
+    const secondYear =
+        getSortableYear(
+            second.year,
+            -Infinity
+        );
+
+
+    if (
+        firstYear !==
+        secondYear
+    ) {
+
+        return (
+            secondYear -
+            firstYear
+        );
+
+    }
+
+
+    return compareTitles(
+        first,
+        second
+    );
+
+}
+
+
+
+function compareOldest(
+    first,
+    second
+) {
+
+    const firstYear =
+        getSortableYear(
+            first.year,
+            Infinity
+        );
+
+    const secondYear =
+        getSortableYear(
+            second.year,
+            Infinity
+        );
+
+
+    if (
+        firstYear !==
+        secondYear
+    ) {
+
+        return (
+            firstYear -
+            secondYear
+        );
+
+    }
+
+
+    return compareTitles(
+        first,
+        second
+    );
+
+}
+
+
+
+function getSortableYear(
+    value,
+    fallback
+) {
+
+    const year =
+        Number(value);
+
+
+    return Number.isFinite(
+        year
+    )
+        ? year
+        : fallback;
+
+}
+
+
+
+/* ========================================
+   FILTER VALUE UTILITIES
+   ======================================== */
+
+function filterValueToText(value) {
+
+    return String(
+        value || ""
+    )
+        .replace(
+            /-/g,
+            " "
+        )
+        .trim();
+
+}
+
+
+
+/* ========================================
+   RENDER WORKS
+   ======================================== */
+
+function renderWorks(works) {
+
+    workGrid.innerHTML =
+        "";
 
 
     works.forEach(
         (work) => {
 
             const card =
-                createWorkCard(work);
+                createWorkCard(
+                    work
+                );
 
 
             workGrid.appendChild(
@@ -526,6 +1585,7 @@ function createWorkCard(work) {
         "work-card";
 
 
+
     /*
      * COVER
      */
@@ -540,10 +1600,6 @@ function createWorkCard(work) {
         "work-card-cover";
 
 
-    /*
-     * Curated records can now also have covers
-     * borrowed from matched Open Library records.
-     */
     if (
         work.coverId
     ) {
@@ -628,11 +1684,6 @@ function createWorkCard(work) {
         "work-card-type";
 
 
-    /*
-     * Make curated and external results easy
-     * to distinguish without changing the
-     * current visual design.
-     */
     if (
         work.source ===
         "crypt-and-quill"
@@ -828,7 +1879,7 @@ function createCoverPlaceholder() {
 function getDisplayTags(work) {
 
     /*
-     * Crypt & Quill records always use our own
+     * Curated records always display our own
      * controlled vocabulary first.
      */
     if (
@@ -849,8 +1900,8 @@ function getDisplayTags(work) {
 
 
     /*
-     * Open Library subjects are displayed only
-     * as external metadata hints.
+     * Open Library subjects remain external
+     * metadata hints.
      */
     if (
         Array.isArray(
@@ -877,7 +1928,7 @@ function getDisplayTags(work) {
 
 
 /* ========================================
-   SUBJECT CLEANUP
+   SUBJECT DISPLAY CLEANUP
    ======================================== */
 
 function isUsefulSubject(subject) {
@@ -909,53 +1960,89 @@ function isUsefulSubject(subject) {
 
 
 /* ========================================
-   RESULT COUNTS
+   RESULTS COUNT
    ======================================== */
 
-function updateResultsCount(count) {
-
-    const label =
-        count === 1
-            ? "work"
-            : "works";
-
-
-    resultsCount.textContent =
-        `${count} ${label}`;
-
-}
-
-
-
-/**
- * Create a more informative count for API searches.
- */
-function createSearchCountLabel(
+function updateFilteredResultsCount(
     visibleCount,
-    totalCount,
-    curatedCount
+    filteredCount
 ) {
 
+    const totalCurrentWorks =
+        currentWorks.length;
+
+
+    /*
+     * Filters have narrowed the result set.
+     */
     if (
-        totalCount === 0
+        filteredCount <
+        totalCurrentWorks
     ) {
 
-        return "0 works";
+        const label =
+            filteredCount === 1
+                ? "work"
+                : "works";
+
+
+        resultsCount.textContent =
+            `${filteredCount} ${label}`;
+
+
+        return;
 
     }
 
 
     /*
-     * Everything fits on screen.
+     * No filtering, but external results have
+     * been capped for display.
      */
     if (
-        visibleCount ===
-        totalCount
+        visibleCount <
+        filteredCount
     ) {
+
+        resultsCount.textContent =
+            `${visibleCount} shown · ${filteredCount} found`;
+
+
+        return;
+
+    }
+
+
+    /*
+     * Search with curated matches.
+     */
+    if (
+        currentViewMode ===
+        "search"
+    ) {
+
+        const curatedCount =
+            currentWorks.filter(
+                (work) => {
+
+                    return (
+                        work.source ===
+                        "crypt-and-quill"
+                    );
+
+                }
+            ).length;
+
 
         if (
             curatedCount > 0
         ) {
+
+            const workLabel =
+                filteredCount === 1
+                    ? "work"
+                    : "works";
+
 
             const curatedLabel =
                 curatedCount === 1
@@ -963,29 +2050,29 @@ function createSearchCountLabel(
                     : "curated matches";
 
 
-            return (
-                `${totalCount} works · ` +
-                `${curatedCount} ${curatedLabel}`
-            );
+            resultsCount.textContent =
+                `${filteredCount} ${workLabel} · ` +
+                `${curatedCount} ${curatedLabel}`;
+
+
+            return;
 
         }
-
-
-        return (
-            `${totalCount} works`
-        );
 
     }
 
 
     /*
-     * More results are stored internally than
-     * we're showing right now.
+     * Normal count.
      */
-    return (
-        `${visibleCount} shown · ` +
-        `${totalCount} found`
-    );
+    const label =
+        filteredCount === 1
+            ? "work"
+            : "works";
+
+
+    resultsCount.textContent =
+        `${filteredCount} ${label}`;
 
 }
 
@@ -1022,46 +2109,36 @@ function hideStatus() {
 
 clearFiltersButton.addEventListener(
     "click",
-    clearDiscoverControls
+    clearDiscoverFilters
 );
 
 
-function clearDiscoverControls() {
+function clearDiscoverFilters() {
 
-    searchInput.value =
+    /*
+     * Notice that we do NOT clear the search
+     * field here.
+     *
+     * "Clear Filters" should clear filters,
+     * not destroy the user's current search.
+     */
+
+    genreFilter.value =
         "";
 
+    subgenreFilter.value =
+        "";
 
-    document
-        .querySelectorAll(
-            ".filter-select"
-        )
-        .forEach(
-            (select) => {
+    typeFilter.value =
+        "";
 
-                select.value =
-                    "";
+    yearFilter.value =
+        "";
 
-            }
-        );
+    sortSelect.value =
+        "featured";
 
 
-    const sortSelect =
-        document.getElementById(
-            "sort-results"
-        );
-
-
-    if (
-        sortSelect
-    ) {
-
-        sortSelect.value =
-            "featured";
-
-    }
-
-
-    showCuratedArchive();
+    applyFiltersAndSort();
 
 }
