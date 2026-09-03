@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="description"
+        content="Explore a work in the Crypt & Quill archive."
+    >
+
+    <title>Work Details | Crypt & Quill</title>
+
+    <link
+        rel="stylesheet"
+        href="assets/css/styles.css"
+    >
+
+</head>
+
+
+<body>
+
+    <!-- ========================================
+         SITE HEADER
+         ======================================== -->
+
+    <header class="site-header">
+
+        <div class="site-header-inner">
+
+            <a
+                class="site-brand"
+                href="index.html"
+            >
+
+                <span class="brand-name">
+                    Crypt &amp; Quill
+                </span>
+
+                <span class="brand-tagline">
+                    A Library of Strange &amp; Unsettling Literature
+                </span>
+
+            </a>
+
+
+            <nav
+                class="main-navigation"
+                aria-label="Main navigation"
+            >
+
+                <a
+                    class="nav-link"
+                    href="index.html"
+                >
+                    Home
+                </a>
+
+                <a
+                    class="nav-link active"
+                    href="discover.html"
+                >
+                    Discover
+                </a>
+
+                <span class="nav-link nav-link-disabled">
+                    My Library
+                </span>
+
+                <span class="nav-link nav-link-disabled">
+                    Reviews
+                </span>
+
+                <span class="nav-link nav-link-disabled">
+                    Lists
+                </span>
+
+            </nav>
+
+        </div>
+
+    </header>
+
+
+
+    <!-- ========================================
+         MAIN
+         ======================================== -->
+
+    <main>
+
+
+        <!-- BREADCRUMB -->
+
+        <section class="work-details-breadcrumb">
+
+            <div class="work-details-breadcrumb-inner">
+
+                <a href="discover.html">
+                    ← Back to Discover
+                </a>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- LOADING / ERROR STATUS -->
+
+        <div
+            class="work-details-status"
+            id="work-details-status"
+            aria-live="polite"
+        >
+            Opening the archive...
+        </div>
+
+
+
+        <!-- WORK DETAILS -->
+
+        <article
+            class="work-details-page"
+            id="work-details-page"
+            hidden
+        >
+
+            <div class="work-details-inner">
+
+
+                <!-- COVER -->
+
+                <div class="work-details-cover-column">
+
+                    <div
+                        class="work-details-cover"
+                        id="work-details-cover"
+                    >
+                    </div>
+
+
+                    <a
+                        class="open-library-link"
+                        id="open-library-link"
+                        href="#"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        hidden
+                    >
+                        View record on Open Library ↗
+                    </a>
+
+                </div>
+
+
+
+                <!-- INFORMATION -->
+
+                <div class="work-details-content">
+
+
+                    <p
+                        class="work-details-source"
+                        id="work-details-source"
+                    >
+                    </p>
+
+
+                    <h1
+                        id="work-details-title"
+                    >
+                    </h1>
+
+
+                    <p
+                        class="work-details-author"
+                        id="work-details-author"
+                    >
+                    </p>
+
+
+
+                    <!-- METADATA -->
+
+                    <dl class="work-metadata">
+
+                        <div class="work-metadata-item">
+
+                            <dt>
+                                First Published
+                            </dt>
+
+                            <dd id="work-details-year">
+                                —
+                            </dd>
+
+                        </div>
+
+
+                        <div class="work-metadata-item">
+
+                            <dt>
+                                Work Type
+                            </dt>
+
+                            <dd id="work-details-type">
+                                —
+                            </dd>
+
+                        </div>
+
+                    </dl>
+
+
+
+                    <!-- CRYPT & QUILL CLASSIFICATION -->
+
+                    <section
+                        class="details-section"
+                        id="classification-section"
+                    >
+
+                        <p class="details-section-kicker">
+                            Crypt &amp; Quill Classification
+                        </p>
+
+                        <h2>
+                            Within the Archive
+                        </h2>
+
+
+                        <div
+                            class="details-tag-groups"
+                            id="details-tag-groups"
+                        >
+                        </div>
+
+                    </section>
+
+
+
+                    <!-- DESCRIPTION -->
+
+                    <section class="details-section">
+
+                        <p class="details-section-kicker">
+                            About the Work
+                        </p>
+
+                        <h2>
+                            Description
+                        </h2>
+
+
+                        <div
+                            class="work-description"
+                            id="work-description"
+                        >
+                        </div>
+
+                    </section>
+
+
+
+                    <!-- PERSONAL TOOLS PREVIEW -->
+
+                    <section class="details-section">
+
+                        <p class="details-section-kicker">
+                            Personal Archive
+                        </p>
+
+                        <h2>
+                            My Library
+                        </h2>
+
+
+                        <div class="details-actions">
+
+                            <button
+                                class="details-action-button"
+                                type="button"
+                                disabled
+                            >
+                                Want to Read
+                            </button>
+
+                            <button
+                                class="details-action-button"
+                                type="button"
+                                disabled
+                            >
+                                Currently Reading
+                            </button>
+
+                            <button
+                                class="details-action-button"
+                                type="button"
+                                disabled
+                            >
+                                Read
+                            </button>
+
+                            <button
+                                class="details-action-button"
+                                type="button"
+                                disabled
+                            >
+                                Favorite
+                            </button>
+
+                        </div>
+
+
+                        <p class="details-coming-soon">
+                            Personal library tools will be added in the next phase.
+                        </p>
+
+                    </section>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- RELATIONSHIPS -->
+
+            <section
+                class="details-wide-section"
+                id="relationships-section"
+                hidden
+            >
+
+                <div class="details-wide-inner">
+
+                    <p class="details-section-kicker">
+                        Connections
+                    </p>
+
+                    <h2>
+                        Related Works
+                    </h2>
+
+
+                    <div
+                        class="relationship-grid"
+                        id="relationship-grid"
+                    >
+                    </div>
+
+                </div>
+
+            </section>
+
+
+
+            <!-- OPEN LIBRARY SUBJECTS -->
+
+            <section
+                class="details-wide-section details-subject-section"
+                id="subjects-section"
+                hidden
+            >
+
+                <div class="details-wide-inner">
+
+                    <p class="details-section-kicker">
+                        External Metadata
+                    </p>
+
+                    <h2>
+                        Open Library Subjects
+                    </h2>
+
+
+                    <div
+                        class="details-subject-list"
+                        id="details-subject-list"
+                    >
+                    </div>
+
+
+                    <p class="external-metadata-note">
+                        These subjects come from Open Library and are kept
+                        separate from Crypt &amp; Quill's curated taxonomy.
+                    </p>
+
+                </div>
+
+            </section>
+
+        </article>
+
+    </main>
+
+
+
+    <!-- ========================================
+         FOOTER
+         ======================================== -->
+
+    <footer class="site-footer">
+
+        <div class="site-footer-inner">
+
+            <div>
+
+                <p class="footer-brand">
+                    Crypt &amp; Quill
+                </p>
+
+                <p class="footer-description">
+                    A curated archive of strange and unsettling literature.
+                </p>
+
+            </div>
+
+
+            <p class="footer-note">
+                The archive is still being assembled.
+            </p>
+
+        </div>
+
+    </footer>
+
+
+
+    <!-- ========================================
+         SCRIPTS
+         ======================================== -->
+
+    <script src="assets/js/common.js"></script>
+
+    <script src="assets/js/catalog.js"></script>
+
+    <script src="assets/js/openlibrary-api.js"></script>
+
+    <script src="assets/js/work-details.js"></script>
+
+</body>
+
+</html>
