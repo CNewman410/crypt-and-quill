@@ -1819,20 +1819,158 @@ function createWorkCard(work) {
 
 
 
-    article.appendChild(
-        coverWrapper
-    );
+article.appendChild(
+    coverWrapper
+);
 
 
-    article.appendChild(
-        content
-    );
+article.appendChild(
+    content
+);
 
 
-    return article;
+/*
+ * Make the entire card behave like a link.
+ */
+makeWorkCardNavigable(
+    article,
+    work
+);
+
+
+return article;
 
 }
 
+/* ========================================
+   WORK CARD NAVIGATION
+   ======================================== */
+
+function makeWorkCardNavigable(
+    card,
+    work
+) {
+
+    const url =
+        getWorkDetailsURL(
+            work
+        );
+
+
+    if (!url) {
+        return;
+    }
+
+
+    card.classList.add(
+        "work-card-clickable"
+    );
+
+
+    card.setAttribute(
+        "role",
+        "link"
+    );
+
+
+    card.setAttribute(
+        "tabindex",
+        "0"
+    );
+
+
+    card.setAttribute(
+        "aria-label",
+        `View details for ${work.title}`
+    );
+
+
+    card.addEventListener(
+        "click",
+        () => {
+
+            window.location.href =
+                url;
+
+        }
+    );
+
+
+    card.addEventListener(
+        "keydown",
+        (event) => {
+
+            if (
+                event.key === "Enter" ||
+                event.key === " "
+            ) {
+
+                event.preventDefault();
+
+
+                window.location.href =
+                    url;
+
+            }
+
+        }
+    );
+
+}
+
+
+
+/* ========================================
+   WORK DETAILS URL
+   ======================================== */
+
+function getWorkDetailsURL(
+    work
+) {
+
+    /*
+     * Curated Crypt & Quill works use our
+     * permanent internal ID.
+     */
+    if (
+        work.source ===
+        "crypt-and-quill" &&
+        work.id
+    ) {
+
+        return (
+            "work-details.html?id=" +
+            encodeURIComponent(
+                work.id
+            )
+        );
+
+    }
+
+
+    /*
+     * External Open Library works use their
+     * Open Library work ID.
+     */
+    if (
+        work.openLibraryKey
+    ) {
+
+        return (
+            "work-details.html?ol=" +
+            encodeURIComponent(
+                normalizeOpenLibraryKey(
+                    work.openLibraryKey
+                )
+            )
+        );
+
+    }
+
+
+    return null;
+
+}
 
 
 /* ========================================
