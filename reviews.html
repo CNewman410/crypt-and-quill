@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="description"
+        content="Your personal Crypt & Quill reviews and ratings."
+    >
+
+    <title>Reviews | Crypt & Quill</title>
+
+    <link
+        rel="stylesheet"
+        href="assets/css/styles.css"
+    >
+
+</head>
+
+
+<body>
+
+    <!-- ========================================
+         HEADER
+         ======================================== -->
+
+    <header class="site-header">
+
+        <div class="site-header-inner">
+
+            <a
+                class="site-brand"
+                href="index.html"
+            >
+
+                <span class="brand-name">
+                    Crypt &amp; Quill
+                </span>
+
+                <span class="brand-tagline">
+                    A Library of Strange &amp; Unsettling Literature
+                </span>
+
+            </a>
+
+
+            <nav
+                class="main-navigation"
+                aria-label="Main navigation"
+            >
+
+                <a
+                    class="nav-link"
+                    href="index.html"
+                >
+                    Home
+                </a>
+
+                <a
+                    class="nav-link"
+                    href="discover.html"
+                >
+                    Discover
+                </a>
+
+                <a
+                    class="nav-link"
+                    href="my-library.html"
+                >
+                    My Library
+                </a>
+
+                <a
+                    class="nav-link active"
+                    href="reviews.html"
+                >
+                    Reviews
+                </a>
+
+                <span class="nav-link nav-link-disabled">
+                    Lists
+                </span>
+
+            </nav>
+
+        </div>
+
+    </header>
+
+
+
+    <!-- ========================================
+         MAIN
+         ======================================== -->
+
+    <main>
+
+
+        <!-- HERO -->
+
+        <section class="reviews-hero">
+
+            <div class="reviews-hero-inner">
+
+                <p class="eyebrow">
+                    Personal Archive
+                </p>
+
+                <h1>
+                    Reviews
+                </h1>
+
+                <p class="reviews-hero-description">
+                    Your ratings, reflections, and notes from works
+                    you've explored throughout the archive.
+                </p>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- CONTROLS -->
+
+        <section class="reviews-controls-section">
+
+            <div class="reviews-controls-inner">
+
+                <p
+                    class="reviews-count"
+                    id="reviews-count"
+                >
+                    0 reviews
+                </p>
+
+
+                <div class="reviews-sort-group">
+
+                    <label for="reviews-sort">
+                        Sort
+                    </label>
+
+                    <select
+                        class="sort-select"
+                        id="reviews-sort"
+                    >
+
+                        <option value="recent">
+                            Recently Reviewed
+                        </option>
+
+                        <option value="highest">
+                            Highest Rated
+                        </option>
+
+                        <option value="lowest">
+                            Lowest Rated
+                        </option>
+
+                        <option value="title">
+                            Title A–Z
+                        </option>
+
+                        <option value="author">
+                            Author A–Z
+                        </option>
+
+                    </select>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- REVIEWS -->
+
+        <section class="reviews-results-section">
+
+            <div class="reviews-results-inner">
+
+                <div
+                    class="reviews-empty-state"
+                    id="reviews-empty-state"
+                    hidden
+                >
+
+                    <p class="library-empty-symbol">
+                        ✦
+                    </p>
+
+                    <h2>
+                        No reviews yet.
+                    </h2>
+
+                    <p>
+                        Write a review from any Work Details page
+                        and it will appear here.
+                    </p>
+
+                    <a
+                        class="button button-primary"
+                        href="discover.html"
+                    >
+                        Explore the Archive
+                    </a>
+
+                </div>
+
+
+                <div
+                    class="reviews-list"
+                    id="reviews-list"
+                >
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+
+    <!-- ========================================
+         FOOTER
+         ======================================== -->
+
+    <footer class="site-footer">
+
+        <div class="site-footer-inner">
+
+            <div>
+
+                <p class="footer-brand">
+                    Crypt &amp; Quill
+                </p>
+
+                <p class="footer-description">
+                    A curated archive of strange and unsettling literature.
+                </p>
+
+            </div>
+
+            <p class="footer-note">
+                The archive is still being assembled.
+            </p>
+
+        </div>
+
+    </footer>
+
+
+
+    <!-- ========================================
+         SCRIPTS
+         ======================================== -->
+
+    <script src="assets/js/common.js"></script>
+
+    <script src="assets/js/storage.js"></script>
+
+    <script src="assets/js/reviews.js"></script>
+
+</body>
+
+</html>
