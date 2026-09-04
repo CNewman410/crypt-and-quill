@@ -3337,6 +3337,8 @@ img {
     font-size: 2.35rem;
 
     line-height: 1;
+
+   transition: transform var(--transition);
 }
 
 
@@ -3382,9 +3384,8 @@ img {
     );
 }
 
-
-.rating-star:hover::before {
-    color: var(--gold-soft);
+.rating-star:hover {
+    transform: scale(1.08);
 }
 
 
