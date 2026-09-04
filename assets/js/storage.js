@@ -1,4 +1,3 @@
-
 /* ========================================
    Crypt & Quill
    Local Storage / Personal Library
@@ -20,14 +19,48 @@ const VALID_READING_STATUSES = [
 ];
 
 
+const RATING_CATEGORIES = {
+
+    storyPlot: {
+        label: "Story / Plot"
+    },
+
+    writing: {
+        label: "Writing"
+    },
+
+    atmosphere: {
+        label: "Atmosphere"
+    },
+
+    characters: {
+        label: "Characters"
+    },
+
+    originality: {
+        label: "Originality"
+    },
+
+    horrorUnease: {
+        label: "Horror / Unease Factor"
+    },
+
+    ending: {
+        label: "Ending"
+    },
+
+    rereadValue: {
+        label: "Re-read Value"
+    }
+
+};
+
+
 
 /* ========================================
    LOAD / SAVE LIBRARY
    ======================================== */
 
-/**
- * Return the complete personal library object.
- */
 function getPersonalLibrary() {
 
     const storedValue =
@@ -76,9 +109,6 @@ function getPersonalLibrary() {
 
 
 
-/**
- * Save the complete personal library.
- */
 function savePersonalLibrary(
     library
 ) {
@@ -96,18 +126,6 @@ function savePersonalLibrary(
    WORK ID
    ======================================== */
 
-/**
- * Determine the permanent storage ID for the
- * current Work Details page.
- *
- * Curated works:
- *
- * cq-the-jaunt
- *
- * External Open Library works:
- *
- * ol:OL12345W
- */
 function getCurrentLibraryWorkId() {
 
     const parameters =
@@ -221,16 +239,18 @@ function saveLibraryWork(
 
 
     /*
-     * If the work has no reading status and is
-     * not a favorite, it no longer needs to stay
-     * in My Library.
+     * Remove the record only if nothing personal
+     * remains attached to it.
      */
     if (
-        !updatedWork.status &&
-        !updatedWork.favorite
+        !hasSavedPersonalData(
+            updatedWork
+        )
     ) {
 
-        delete library[workId];
+        delete library[
+            workId
+        ];
 
     }
     else {
@@ -250,16 +270,88 @@ function saveLibraryWork(
 
 
 /* ========================================
+   SAVED DATA CHECK
+   ======================================== */
+
+function hasSavedPersonalData(
+    work
+) {
+
+    if (
+        work.status
+    ) {
+        return true;
+    }
+
+
+    if (
+        work.favorite
+    ) {
+        return true;
+    }
+
+
+    if (
+        hasMeaningfulRatings(
+            work.ratings
+        )
+    ) {
+        return true;
+    }
+
+
+    if (
+        typeof work.review === "string" &&
+        work.review.trim()
+    ) {
+        return true;
+    }
+
+
+    return false;
+
+}
+
+
+
+function hasMeaningfulRatings(
+    ratings
+) {
+
+    if (
+        !ratings ||
+        typeof ratings !== "object"
+    ) {
+        return false;
+    }
+
+
+    return Object.values(
+        ratings
+    ).some(
+        (value) => {
+
+            const rating =
+                Number(value);
+
+
+            return (
+                Number.isFinite(rating) &&
+                rating >= 0.5 &&
+                rating <= 5
+            );
+
+        }
+    );
+
+}
+
+
+
+/* ========================================
    PAGE METADATA
    ======================================== */
 
-/**
- * Read basic metadata from the already-rendered
- * Work Details page.
- *
- * This means storage.js does not need to make
- * duplicate Open Library API requests.
- */
 function getCurrentWorkMetadata() {
 
     const titleElement =
@@ -267,15 +359,18 @@ function getCurrentWorkMetadata() {
             "work-details-title"
         );
 
+
     const authorElement =
         document.getElementById(
             "work-details-author"
         );
 
+
     const yearElement =
         document.getElementById(
             "work-details-year"
         );
+
 
     const typeElement =
         document.getElementById(
@@ -323,9 +418,6 @@ function getCurrentWorkMetadata() {
 
 
 
-/**
- * Store a numeric year when possible.
- */
 function getStoredYear(
     value
 ) {
@@ -378,9 +470,6 @@ function setReadingStatus(
         );
 
 
-    /*
-     * Clicking the active status again removes it.
-     */
     const status =
         savedWork?.status === newStatus
             ? null
@@ -438,14 +527,229 @@ function toggleFavorite(
 
 
 /* ========================================
-   WORK DETAILS PAGE INITIALIZATION
+   RATINGS
+   ======================================== */
+
+function setCategoryRating(
+    workId,
+    category,
+    value
+) {
+
+    if (
+        !RATING_CATEGORIES[
+            category
+        ]
+    ) {
+        return;
+    }
+
+
+    const rating =
+        Number(value);
+
+
+    if (
+        !Number.isFinite(rating) ||
+        rating < 0.5 ||
+        rating > 5 ||
+        rating * 2 % 1 !== 0
+    ) {
+        return;
+    }
+
+
+    const savedWork =
+        getSavedLibraryWork(
+            workId
+        );
+
+
+    const ratings = {
+
+        ...(savedWork?.ratings || {})
+
+    };
+
+
+    ratings[
+        category
+    ] = rating;
+
+
+    const overallRating =
+        calculateOverallRating(
+            ratings
+        );
+
+
+    saveLibraryWork(
+        workId,
+        {
+            ratings:
+                ratings,
+
+            overallRating:
+                overallRating
+        }
+    );
+
+
+    renderRatingControls();
+
+    updateLibraryButtons();
+
+}
+
+
+
+function clearCategoryRating(
+    workId,
+    category
+) {
+
+    const savedWork =
+        getSavedLibraryWork(
+            workId
+        );
+
+
+    if (
+        !savedWork?.ratings
+    ) {
+        return;
+    }
+
+
+    const ratings = {
+
+        ...savedWork.ratings
+
+    };
+
+
+    delete ratings[
+        category
+    ];
+
+
+    const overallRating =
+        calculateOverallRating(
+            ratings
+        );
+
+
+    saveLibraryWork(
+        workId,
+        {
+            ratings:
+                ratings,
+
+            overallRating:
+                overallRating
+        }
+    );
+
+
+    renderRatingControls();
+
+    updateLibraryButtons();
+
+}
+
+
+
+/* ========================================
+   OVERALL RATING
+   ======================================== */
+
+function calculateOverallRating(
+    ratings
+) {
+
+    if (
+        !ratings ||
+        typeof ratings !== "object"
+    ) {
+        return null;
+    }
+
+
+    const validRatings =
+        Object.values(
+            ratings
+        )
+            .map(Number)
+            .filter(
+                (rating) => {
+
+                    return (
+                        Number.isFinite(
+                            rating
+                        ) &&
+                        rating >= 0.5 &&
+                        rating <= 5
+                    );
+
+                }
+            );
+
+
+    if (
+        validRatings.length === 0
+    ) {
+        return null;
+    }
+
+
+    const total =
+        validRatings.reduce(
+            (sum, rating) => {
+
+                return (
+                    sum +
+                    rating
+                );
+
+            },
+            0
+        );
+
+
+    return Number(
+        (
+            total /
+            validRatings.length
+        ).toFixed(1)
+    );
+
+}
+
+
+
+/* ========================================
+   INITIALIZE PERSONAL CONTROLS
    ======================================== */
 
 document.addEventListener(
     "DOMContentLoaded",
-    initializeLibraryControls
+    initializePersonalControls
 );
 
+
+function initializePersonalControls() {
+
+    initializeLibraryControls();
+
+    initializeRatingControls();
+
+}
+
+
+
+/* ========================================
+   LIBRARY BUTTON INITIALIZATION
+   ======================================== */
 
 function initializeLibraryControls() {
 
@@ -453,10 +757,6 @@ function initializeLibraryControls() {
         getCurrentLibraryWorkId();
 
 
-    /*
-     * storage.js may eventually load on pages
-     * other than Work Details.
-     */
     if (!workId) {
         return;
     }
@@ -520,7 +820,7 @@ function initializeLibraryControls() {
 
 
 /* ========================================
-   UPDATE BUTTON APPEARANCE
+   UPDATE LIBRARY BUTTONS
    ======================================== */
 
 function updateLibraryButtons() {
@@ -607,8 +907,7 @@ function updateLibraryButtons() {
 
 
     updateLibraryMessage(
-        currentStatus,
-        favorite
+        savedWork
     );
 
 }
@@ -616,12 +915,11 @@ function updateLibraryButtons() {
 
 
 /* ========================================
-   STATUS MESSAGE
+   LIBRARY STATUS MESSAGE
    ======================================== */
 
 function updateLibraryMessage(
-    status,
-    favorite
+    savedWork
 ) {
 
     const message =
@@ -632,6 +930,16 @@ function updateLibraryMessage(
 
     if (!message) {
         return;
+    }
+
+
+    if (!savedWork) {
+
+        message.textContent =
+            "This work has not been added to your personal library.";
+
+        return;
+
     }
 
 
@@ -653,21 +961,44 @@ function updateLibraryMessage(
 
 
     if (
-        status &&
-        statusLabels[status]
+        savedWork.status &&
+        statusLabels[
+            savedWork.status
+        ]
     ) {
 
         pieces.push(
-            statusLabels[status]
+            statusLabels[
+                savedWork.status
+            ]
         );
 
     }
 
 
-    if (favorite) {
+    if (
+        savedWork.favorite
+    ) {
 
         pieces.push(
             "Favorite"
+        );
+
+    }
+
+
+    if (
+        Number.isFinite(
+            Number(
+                savedWork.overallRating
+            )
+        )
+    ) {
+
+        pieces.push(
+            `Rated ${Number(
+                savedWork.overallRating
+            ).toFixed(1)} / 5`
         );
 
     }
@@ -687,7 +1018,562 @@ function updateLibraryMessage(
 
     message.textContent =
         "Saved to your library: " +
-        pieces.join(" · ");
+        pieces.join(
+            " · "
+        );
+
+}
+
+
+
+/* ========================================
+   RATING INITIALIZATION
+   ======================================== */
+
+function initializeRatingControls() {
+
+    const container =
+        document.getElementById(
+            "category-ratings"
+        );
+
+
+    const workId =
+        getCurrentLibraryWorkId();
+
+
+    if (
+        !container ||
+        !workId
+    ) {
+        return;
+    }
+
+
+    buildRatingRows(
+        container,
+        workId
+    );
+
+
+    renderRatingControls();
+
+}
+
+
+
+/* ========================================
+   BUILD RATING ROWS
+   ======================================== */
+
+function buildRatingRows(
+    container,
+    workId
+) {
+
+    container.innerHTML =
+        "";
+
+
+    Object.entries(
+        RATING_CATEGORIES
+    ).forEach(
+        ([categoryKey, category]) => {
+
+            const row =
+                createRatingRow(
+                    categoryKey,
+                    category.label,
+                    workId
+                );
+
+
+            container.appendChild(
+                row
+            );
+
+        }
+    );
+
+}
+
+
+
+/* ========================================
+   CREATE RATING ROW
+   ======================================== */
+
+function createRatingRow(
+    categoryKey,
+    label,
+    workId
+) {
+
+    const row =
+        document.createElement(
+            "div"
+        );
+
+
+    row.className =
+        "category-rating-row";
+
+
+    row.dataset.ratingCategory =
+        categoryKey;
+
+
+
+    const labelElement =
+        document.createElement(
+            "p"
+        );
+
+
+    labelElement.className =
+        "category-rating-label";
+
+
+    labelElement.textContent =
+        label;
+
+
+
+    const starArea =
+        document.createElement(
+            "div"
+        );
+
+
+    starArea.className =
+        "rating-stars";
+
+
+    starArea.setAttribute(
+        "role",
+        "group"
+    );
+
+
+    starArea.setAttribute(
+        "aria-label",
+        `${label} rating`
+    );
+
+
+
+    for (
+        let starIndex = 1;
+        starIndex <= 5;
+        starIndex += 1
+    ) {
+
+        const star =
+            document.createElement(
+                "button"
+            );
+
+
+        star.type =
+            "button";
+
+
+        star.className =
+            "rating-star";
+
+
+        star.dataset.starIndex =
+            String(
+                starIndex
+            );
+
+
+        star.setAttribute(
+            "aria-label",
+            `${label}: ${starIndex} stars. Click the left half for ${starIndex - 0.5}.`
+        );
+
+
+        star.addEventListener(
+            "click",
+            (event) => {
+
+                let ratingValue =
+                    starIndex;
+
+
+                /*
+                 * Mouse/touch click:
+                 * left half = half star
+                 * right half = whole star
+                 */
+                if (
+                    event.detail !== 0
+                ) {
+
+                    const rectangle =
+                        star.getBoundingClientRect();
+
+
+                    const clickPosition =
+                        event.clientX -
+                        rectangle.left;
+
+
+                    const clickedLeftHalf =
+                        clickPosition <=
+                        rectangle.width / 2;
+
+
+                    ratingValue =
+                        clickedLeftHalf
+                            ? starIndex - 0.5
+                            : starIndex;
+
+                }
+
+
+                setCategoryRating(
+                    workId,
+                    categoryKey,
+                    ratingValue
+                );
+
+            }
+        );
+
+
+        starArea.appendChild(
+            star
+        );
+
+    }
+
+
+
+    const value =
+        document.createElement(
+            "span"
+        );
+
+
+    value.className =
+        "category-rating-value";
+
+
+    value.dataset.ratingValue =
+        categoryKey;
+
+
+    value.textContent =
+        "—";
+
+
+
+    const clearButton =
+        document.createElement(
+            "button"
+        );
+
+
+    clearButton.type =
+        "button";
+
+
+    clearButton.className =
+        "category-rating-clear";
+
+
+    clearButton.dataset.clearRating =
+        categoryKey;
+
+
+    clearButton.textContent =
+        "Clear";
+
+
+    clearButton.addEventListener(
+        "click",
+        () => {
+
+            clearCategoryRating(
+                workId,
+                categoryKey
+            );
+
+        }
+    );
+
+
+
+    row.appendChild(
+        labelElement
+    );
+
+
+    row.appendChild(
+        starArea
+    );
+
+
+    row.appendChild(
+        value
+    );
+
+
+    row.appendChild(
+        clearButton
+    );
+
+
+    return row;
+
+}
+
+
+
+/* ========================================
+   RENDER RATING CONTROLS
+   ======================================== */
+
+function renderRatingControls() {
+
+    const workId =
+        getCurrentLibraryWorkId();
+
+
+    const ratingContainer =
+        document.getElementById(
+            "category-ratings"
+        );
+
+
+    if (
+        !workId ||
+        !ratingContainer
+    ) {
+        return;
+    }
+
+
+    const savedWork =
+        getSavedLibraryWork(
+            workId
+        );
+
+
+    const ratings =
+        savedWork?.ratings ||
+        {};
+
+
+    Object.keys(
+        RATING_CATEGORIES
+    ).forEach(
+        (categoryKey) => {
+
+            const rating =
+                Number(
+                    ratings[
+                        categoryKey
+                    ]
+                );
+
+
+            const row =
+                ratingContainer.querySelector(
+                    `[data-rating-category="${categoryKey}"]`
+                );
+
+
+            if (!row) {
+                return;
+            }
+
+
+            const stars =
+                row.querySelectorAll(
+                    ".rating-star"
+                );
+
+
+            stars.forEach(
+                (star) => {
+
+                    const starIndex =
+                        Number(
+                            star.dataset.starIndex
+                        );
+
+
+                    let fill =
+                        0;
+
+
+                    if (
+                        Number.isFinite(
+                            rating
+                        )
+                    ) {
+
+                        if (
+                            rating >= starIndex
+                        ) {
+
+                            fill =
+                                100;
+
+                        }
+                        else if (
+                            rating >=
+                            starIndex - 0.5
+                        ) {
+
+                            fill =
+                                50;
+
+                        }
+
+                    }
+
+
+                    star.style.setProperty(
+                        "--fill",
+                        `${fill}%`
+                    );
+
+
+                    star.setAttribute(
+                        "aria-pressed",
+                        String(
+                            fill > 0
+                        )
+                    );
+
+                }
+            );
+
+
+            const value =
+                row.querySelector(
+                    `[data-rating-value="${categoryKey}"]`
+                );
+
+
+            if (value) {
+
+                value.textContent =
+                    Number.isFinite(rating)
+                        ? rating.toFixed(1)
+                        : "—";
+
+            }
+
+
+            const clearButton =
+                row.querySelector(
+                    `[data-clear-rating="${categoryKey}"]`
+                );
+
+
+            if (clearButton) {
+
+                clearButton.disabled =
+                    !Number.isFinite(
+                        rating
+                    );
+
+            }
+
+        }
+    );
+
+
+    renderOverallRating(
+        ratings
+    );
+
+}
+
+
+
+/* ========================================
+   OVERALL RATING DISPLAY
+   ======================================== */
+
+function renderOverallRating(
+    ratings
+) {
+
+    const scoreElement =
+        document.getElementById(
+            "overall-rating-score"
+        );
+
+
+    const noteElement =
+        document.getElementById(
+            "overall-rating-note"
+        );
+
+
+    if (
+        !scoreElement ||
+        !noteElement
+    ) {
+        return;
+    }
+
+
+    const overallRating =
+        calculateOverallRating(
+            ratings
+        );
+
+
+    const ratedCount =
+        Object.values(
+            ratings || {}
+        ).filter(
+            (value) => {
+
+                return Number.isFinite(
+                    Number(value)
+                );
+
+            }
+        ).length;
+
+
+    if (
+        overallRating === null
+    ) {
+
+        scoreElement.textContent =
+            "— / 5";
+
+
+        noteElement.textContent =
+            "Rate one or more categories to calculate your overall score.";
+
+
+        return;
+
+    }
+
+
+    scoreElement.textContent =
+        `${overallRating.toFixed(1)} / 5`;
+
+
+    const categoryWord =
+        ratedCount === 1
+            ? "category"
+            : "categories";
+
+
+    noteElement.textContent =
+        `Based on ${ratedCount} of 8 ${categoryWord}.`;
 
 }
 
@@ -697,11 +1583,6 @@ function updateLibraryMessage(
    FUTURE MY LIBRARY HELPERS
    ======================================== */
 
-/**
- * Return saved works as an array.
- *
- * We'll use this when we build My Library.
- */
 function getSavedLibraryWorks() {
 
     const library =
@@ -716,9 +1597,6 @@ function getSavedLibraryWorks() {
 
 
 
-/**
- * Remove one work completely from My Library.
- */
 function removeLibraryWork(
     workId
 ) {
