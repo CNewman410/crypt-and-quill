@@ -3560,4 +3560,169 @@ img {
 
     font-size: 2.5rem;
 } */
+/* ========================================
+   MY REVIEW
+   ======================================== */
 
+.review-instructions {
+
+    max-width: 680px;
+
+    margin: 10px 0 22px;
+
+    color: var(--text-muted);
+
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+
+    font-size: 0.78rem;
+
+    line-height: 1.6;
+}
+
+
+.review-textarea {
+
+    width: 100%;
+    min-height: 220px;
+
+    padding: 18px;
+
+    resize: vertical;
+
+    background: #0d0b0b;
+
+    border: 1px solid var(--border);
+
+    outline: none;
+
+    color: var(--text);
+
+    font-family:
+        Georgia,
+        "Times New Roman",
+        serif;
+
+    font-size: 1rem;
+
+    line-height: 1.75;
+
+    transition:
+        border-color var(--transition),
+        background var(--transition);
+}
+
+
+.review-textarea:focus {
+
+    background: #100e0e;
+
+    border-color: var(--gold-soft);
+}
+
+
+.review-textarea::placeholder {
+    color: var(--text-muted);
+}
+
+
+.review-footer {
+
+    margin-top: 14px;
+
+    display: flex;
+
+    align-items: flex-start;
+    justify-content: space-between;
+
+    gap: 25px;
+}
+
+
+.review-status-message,
+.review-character-count {
+
+    margin: 0;
+
+    color: var(--text-muted);
+
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+
+    font-size: 0.72rem;
+}
+
+
+.review-character-count {
+    margin-top: 4px;
+}
+
+
+.review-actions {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+}
+
+
+.review-delete-button {
+
+    min-height: 48px;
+
+    padding: 0 14px;
+
+    background: transparent;
+
+    border: 0;
+
+    color: var(--text-muted);
+
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+
+    font-size: 0.68rem;
+
+    font-weight: 700;
+
+    letter-spacing: 0.06em;
+
+    text-transform: uppercase;
+
+    cursor: pointer;
+}
+
+
+.review-delete-button:hover {
+    color: var(--burgundy-light);
+}
+
+
+@media (max-width: 650px) {
+
+    .review-footer {
+
+        flex-direction: column;
+    }
+
+
+    .review-actions {
+
+        width: 100%;
+    }
+
+
+    .review-actions .button {
+
+        flex: 1;
+    }
+
+}
