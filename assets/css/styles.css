@@ -3340,7 +3340,8 @@ img {
 }
 
 
-.rating-star::before {
+.rating-star::before,
+.rating-star::after {
 
     content: "★";
 
@@ -3353,31 +3354,32 @@ img {
     align-items: center;
     justify-content: center;
 
+    font-size: inherit;
+    line-height: 1;
+}
+
+
+.rating-star::before {
+
     color: var(--border-light);
 }
 
 
 .rating-star::after {
 
-    content: "★";
-
-    position: absolute;
-
-    top: 0;
-    left: 0;
-
-    width: var(--fill);
-    height: 100%;
-
-    overflow: hidden;
-
-    display: flex;
-
-    align-items: center;
-
     color: var(--gold);
 
-    white-space: nowrap;
+    /*
+     * Keep the gold star exactly aligned with the
+     * background star, then reveal only the amount
+     * represented by --fill.
+     */
+    clip-path: inset(
+        0
+        calc(100% - var(--fill))
+        0
+        0
+    );
 }
 
 
