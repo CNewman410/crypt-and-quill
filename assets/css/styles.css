@@ -3308,7 +3308,7 @@ img {
 
     align-items: center;
 
-    gap: 3px;
+    gap: 5px;
 }
 
 
@@ -3318,8 +3318,11 @@ img {
 
     position: relative;
 
-    width: 25px;
-    height: 32px;
+    width: 42px;
+    min-width: 42px;
+    height: 46px;
+
+    flex: 0 0 42px;
 
     padding: 0;
 
@@ -3331,7 +3334,7 @@ img {
 
     cursor: pointer;
 
-    font-size: 1.55rem;
+    font-size: 2.35rem;
 
     line-height: 1;
 }
@@ -3547,10 +3550,11 @@ img {
    LARGER RATING STARS
    ======================================== */
 
-.rating-star {
+/* .rating-star {
 
     width: 55px;
     height: 61px;
 
     font-size: 2.5rem;
-}
+} */
+
