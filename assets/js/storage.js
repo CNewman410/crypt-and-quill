@@ -743,6 +743,8 @@ function initializePersonalControls() {
 
     initializeRatingControls();
 
+    initializeReviewControls();
+
 }
 
 
@@ -1699,7 +1701,292 @@ function renderOverallRating(
 
 }
 
+/* ========================================
+   REVIEWS
+   ======================================== */
 
+function saveWorkReview(
+    workId,
+    reviewText
+) {
+
+    if (!workId) {
+        return;
+    }
+
+
+    const cleanReview =
+        String(
+            reviewText || ""
+        ).trim();
+
+
+    const savedWork =
+        getSavedLibraryWork(
+            workId
+        );
+
+
+    const changes = {
+
+        review:
+            cleanReview || null,
+
+        reviewUpdatedAt:
+            cleanReview
+                ? new Date().toISOString()
+                : null
+
+    };
+
+
+    /*
+     * Preserve the original review creation date
+     * when editing an existing review.
+     */
+    if (
+        cleanReview &&
+        savedWork?.review &&
+        savedWork?.reviewCreatedAt
+    ) {
+
+        changes.reviewCreatedAt =
+            savedWork.reviewCreatedAt;
+
+    }
+    else if (
+        cleanReview
+    ) {
+
+        changes.reviewCreatedAt =
+            new Date().toISOString();
+
+    }
+    else {
+
+        changes.reviewCreatedAt =
+            null;
+
+    }
+
+
+    saveLibraryWork(
+        workId,
+        changes
+    );
+
+
+    updateReviewControls();
+
+    updateLibraryButtons();
+
+}
+
+
+
+/* ========================================
+   REVIEW INITIALIZATION
+   ======================================== */
+
+function initializeReviewControls() {
+
+    const workId =
+        getCurrentLibraryWorkId();
+
+
+    const reviewTextarea =
+        document.getElementById(
+            "review-text"
+        );
+
+
+    const saveButton =
+        document.getElementById(
+            "save-review-button"
+        );
+
+
+    const deleteButton =
+        document.getElementById(
+            "delete-review-button"
+        );
+
+
+    if (
+        !workId ||
+        !reviewTextarea
+    ) {
+        return;
+    }
+
+
+    if (
+        saveButton
+    ) {
+
+        saveButton.addEventListener(
+            "click",
+            () => {
+
+                saveWorkReview(
+                    workId,
+                    reviewTextarea.value
+                );
+
+            }
+        );
+
+    }
+
+
+    if (
+        deleteButton
+    ) {
+
+        deleteButton.addEventListener(
+            "click",
+            () => {
+
+                reviewTextarea.value =
+                    "";
+
+
+                saveWorkReview(
+                    workId,
+                    ""
+                );
+
+            }
+        );
+
+    }
+
+
+    reviewTextarea.addEventListener(
+        "input",
+        updateReviewCharacterCount
+    );
+
+
+    updateReviewControls();
+
+}
+
+
+
+/* ========================================
+   UPDATE REVIEW CONTROLS
+   ======================================== */
+
+function updateReviewControls() {
+
+    const workId =
+        getCurrentLibraryWorkId();
+
+
+    const reviewTextarea =
+        document.getElementById(
+            "review-text"
+        );
+
+
+    const reviewMessage =
+        document.getElementById(
+            "review-status-message"
+        );
+
+
+    const deleteButton =
+        document.getElementById(
+            "delete-review-button"
+        );
+
+
+    if (
+        !workId ||
+        !reviewTextarea
+    ) {
+        return;
+    }
+
+
+    const savedWork =
+        getSavedLibraryWork(
+            workId
+        );
+
+
+    const savedReview =
+        savedWork?.review ||
+        "";
+
+
+    reviewTextarea.value =
+        savedReview;
+
+
+    if (
+        reviewMessage
+    ) {
+
+        reviewMessage.textContent =
+            savedReview
+                ? "Your review is saved."
+                : "Write a review for this work.";
+
+    }
+
+
+    if (
+        deleteButton
+    ) {
+
+        deleteButton.hidden =
+            !savedReview;
+
+    }
+
+
+    updateReviewCharacterCount();
+
+}
+
+
+
+/* ========================================
+   REVIEW CHARACTER COUNT
+   ======================================== */
+
+function updateReviewCharacterCount() {
+
+    const reviewTextarea =
+        document.getElementById(
+            "review-text"
+        );
+
+
+    const countElement =
+        document.getElementById(
+            "review-character-count"
+        );
+
+
+    if (
+        !reviewTextarea ||
+        !countElement
+    ) {
+        return;
+    }
+
+
+    const count =
+        reviewTextarea.value.length;
+
+
+    countElement.textContent =
+        `${count} characters`;
+
+}
 
 /* ========================================
    FUTURE MY LIBRARY HELPERS
