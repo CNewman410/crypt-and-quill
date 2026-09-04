@@ -1102,7 +1102,6 @@ function buildRatingRows(
 /* ========================================
    CREATE RATING ROW
    ======================================== */
-
 function createRatingRow(
     categoryKey,
     label,
@@ -1162,6 +1161,10 @@ function createRatingRow(
 
 
 
+    /* ========================================
+       CREATE FIVE STARS
+       ======================================== */
+
     for (
         let starIndex = 1;
         starIndex <= 5;
@@ -1193,6 +1196,11 @@ function createRatingRow(
             `${label}: ${starIndex} stars. Click the left half for ${starIndex - 0.5}.`
         );
 
+
+
+        /* ========================================
+           SAVE RATING ON CLICK
+           ======================================== */
 
         star.addEventListener(
             "click",
@@ -1243,11 +1251,64 @@ function createRatingRow(
         );
 
 
+
+        /* ========================================
+           PREVIEW HALF/FULL STAR ON HOVER
+           ======================================== */
+
+        star.addEventListener(
+            "pointermove",
+            (event) => {
+
+                const rectangle =
+                    star.getBoundingClientRect();
+
+
+                const pointerPosition =
+                    event.clientX -
+                    rectangle.left;
+
+
+                const hoveringLeftHalf =
+                    pointerPosition <=
+                    rectangle.width / 2;
+
+
+                const previewValue =
+                    hoveringLeftHalf
+                        ? starIndex - 0.5
+                        : starIndex;
+
+
+                previewCategoryRating(
+                    row,
+                    previewValue
+                );
+
+            }
+        );
+
+
         starArea.appendChild(
             star
         );
 
     }
+
+
+
+    /* ========================================
+       RESTORE SAVED RATING AFTER HOVER
+       ======================================== */
+
+    starArea.addEventListener(
+        "pointerleave",
+        () => {
+
+            renderRatingControls();
+
+        }
+    );
 
 
 
@@ -1329,6 +1390,67 @@ function createRatingRow(
     return row;
 
 }
+
+
+
+/* ========================================
+   RATING HOVER PREVIEW
+   ======================================== */
+
+function previewCategoryRating(
+    row,
+    ratingValue
+) {
+
+    const stars =
+        row.querySelectorAll(
+            ".rating-star"
+        );
+
+
+    stars.forEach(
+        (star) => {
+
+            const starIndex =
+                Number(
+                    star.dataset.starIndex
+                );
+
+
+            let fill =
+                0;
+
+
+            if (
+                ratingValue >=
+                starIndex
+            ) {
+
+                fill =
+                    100;
+
+            }
+            else if (
+                ratingValue >=
+                starIndex - 0.5
+            ) {
+
+                fill =
+                    50;
+
+            }
+
+
+            star.style.setProperty(
+                "--fill",
+                `${fill}%`
+            );
+
+        }
+    );
+
+}
+
 
 
 
