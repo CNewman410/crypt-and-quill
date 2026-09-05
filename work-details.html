@@ -323,6 +323,16 @@
 
                             <button
                                 class="details-action-button"
+                                type="button"
+                                data-reading-status="dnf"
+                                aria-pressed="false"
+                            >
+                                Did Not Finish
+                            </button>
+
+
+                            <button
+                                class="details-action-button"
                                 id="favorite-button"
                                 type="button"
                                 aria-pressed="false"
@@ -340,6 +350,73 @@
                         >
                             This work has not been added to your personal library.
                         </p>
+
+
+                        <form
+                            class="reading-dates-form"
+                            id="reading-dates-form"
+                        >
+
+                            <fieldset>
+
+                                <legend>
+                                    Reading Dates
+                                </legend>
+
+                                <p class="reading-dates-help">
+                                    Add any dates you remember. All fields are optional.
+                                </p>
+
+                                <div class="reading-date-fields">
+
+                                    <label>
+                                        <span>Date Started</span>
+                                        <input
+                                            type="date"
+                                            data-reading-date="dateStarted"
+                                        >
+                                    </label>
+
+                                    <label>
+                                        <span>Date Finished</span>
+                                        <input
+                                            type="date"
+                                            data-reading-date="dateFinished"
+                                        >
+                                    </label>
+
+                                    <label>
+                                        <span>DNF / Abandoned Date</span>
+                                        <input
+                                            type="date"
+                                            data-reading-date="dateAbandoned"
+                                        >
+                                    </label>
+
+                                </div>
+
+                            </fieldset>
+
+                            <div class="reading-dates-footer">
+
+                                <p
+                                    class="reading-dates-message"
+                                    id="reading-dates-message"
+                                    aria-live="polite"
+                                >
+                                    Reading dates are optional.
+                                </p>
+
+                                <button
+                                    class="button button-secondary"
+                                    type="submit"
+                                >
+                                    Save Reading Dates
+                                </button>
+
+                            </div>
+
+                        </form>
 
                     </section>
                     <!-- MY RATING -->

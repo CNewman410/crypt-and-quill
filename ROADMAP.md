@@ -114,20 +114,20 @@ Improve the personal-library system before adding major new public-facing featur
 
 ## DNF
 
-- [ ] Add Did Not Finish status
-- [ ] Determine whether DNF behaves as a reading status or separate state
-- [ ] Display DNF clearly in My Library
-- [ ] Add DNF filter
-- [ ] Preserve ratings/reviews if a work is marked DNF
-- [ ] Do not destroy previous localStorage records
+- [x] Add Did Not Finish status
+- [x] Treat DNF as an exclusive reading status; favorites remain independent
+- [x] Display DNF clearly in My Library
+- [x] Add DNF filter
+- [x] Preserve ratings/reviews if a work is marked DNF
+- [x] Do not destroy previous localStorage records
 
 ## Reading Dates
 
 Add optional:
 
-- [ ] date started
-- [ ] date finished
-- [ ] date abandoned / DNF
+- [x] date started
+- [x] date finished
+- [x] date abandoned / DNF
 
 Requirements:
 
