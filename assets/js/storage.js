@@ -520,9 +520,35 @@ function isValidReadingDate(
 
     if (
         typeof value !== "string" ||
-        !/^\d{4}-\d{2}-\d{2}$/.test(value)
+        !/^\d{4}(?:-\d{2})?(?:-\d{2})?$/.test(value)
     ) {
         return false;
+    }
+
+
+    const parts =
+        value.split("-");
+
+
+    if (parts.length === 1) {
+        return true;
+    }
+
+
+    const month =
+        Number(parts[1]);
+
+
+    if (
+        month < 1 ||
+        month > 12
+    ) {
+        return false;
+    }
+
+
+    if (parts.length === 2) {
+        return true;
     }
 
 
@@ -986,9 +1012,22 @@ function formatReadingDate(
     value
 ) {
 
+    const parts =
+        value.split("-");
+
+
+    if (parts.length === 1) {
+        return value;
+    }
+
+
     const date =
         new Date(
-            `${value}T00:00:00Z`
+            `${value}${
+                parts.length === 2
+                    ? "-01"
+                    : ""
+            }T00:00:00Z`
         );
 
 
@@ -997,7 +1036,10 @@ function formatReadingDate(
         {
             year: "numeric",
             month: "short",
-            day: "numeric",
+            day:
+                parts.length === 3
+                    ? "numeric"
+                    : undefined,
             timeZone: "UTC"
         }
     ).format(date);
