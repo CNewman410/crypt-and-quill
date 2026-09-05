@@ -261,6 +261,20 @@ function filterLibraryWorks(
             );
 
 
+        case "dnf":
+
+            return works.filter(
+                (work) => {
+
+                    return (
+                        work.status ===
+                        "dnf"
+                    );
+
+                }
+            );
+
+
         case "favorites":
 
             return works.filter(
@@ -855,6 +869,21 @@ function createLibraryCard(
     );
 
 
+    const readingDates =
+        createLibraryReadingDates(
+            work
+        );
+
+
+    if (readingDates) {
+
+        card.appendChild(
+            readingDates
+        );
+
+    }
+
+
     card.appendChild(
         source
     );
@@ -974,6 +1003,11 @@ function getLibrarySectionTitle() {
             return "Read";
 
 
+        case "dnf":
+
+            return "Did Not Finish";
+
+
         case "favorites":
 
             return "Favorites";
@@ -1028,6 +1062,14 @@ function showLibraryEmptyState() {
 
             emptyMessage.textContent =
                 "No completed works have been recorded yet.";
+
+            break;
+
+
+        case "dnf":
+
+            emptyMessage.textContent =
+                "No abandoned works have been recorded yet.";
 
             break;
 
@@ -1094,11 +1136,59 @@ function getReadingStatusLabel(
             return "Read";
 
 
+        case "dnf":
+
+            return "Did Not Finish";
+
+
         default:
 
             return "Saved";
 
     }
+
+}
+
+
+function createLibraryReadingDates(
+    work
+) {
+
+    const dates = [
+        ["Started", work.dateStarted],
+        ["Finished", work.dateFinished],
+        ["Abandoned", work.dateAbandoned]
+    ].filter(
+        ([, value]) => isValidReadingDate(value)
+    );
+
+
+    if (dates.length === 0) {
+        return null;
+    }
+
+
+    const container =
+        document.createElement(
+            "p"
+        );
+
+
+    container.className =
+        "library-card-reading-dates";
+
+
+    container.textContent =
+        dates.map(
+            ([label, value]) => {
+
+                return `${label} ${formatReadingDate(value)}`;
+
+            }
+        ).join(" · ");
+
+
+    return container;
 
 }
 

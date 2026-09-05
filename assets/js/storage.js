@@ -15,7 +15,15 @@ const CRYPT_QUILL_LIBRARY_KEY =
 const VALID_READING_STATUSES = [
     "want-to-read",
     "currently-reading",
-    "read"
+    "read",
+    "dnf"
+];
+
+
+const READING_DATE_FIELDS = [
+    "dateStarted",
+    "dateFinished",
+    "dateAbandoned"
 ];
 
 
@@ -308,6 +316,17 @@ function hasSavedPersonalData(
     }
 
 
+    if (
+        READING_DATE_FIELDS.some(
+            (field) => isValidReadingDate(
+                work[field]
+            )
+        )
+    ) {
+        return true;
+    }
+
+
     return false;
 
 }
@@ -484,6 +503,106 @@ function setReadingStatus(
         }
     );
 
+
+    updateLibraryButtons();
+
+}
+
+
+
+/* ========================================
+   READING DATES
+   ======================================== */
+
+function isValidReadingDate(
+    value
+) {
+
+    if (
+        typeof value !== "string" ||
+        !/^\d{4}(?:-\d{2})?(?:-\d{2})?$/.test(value)
+    ) {
+        return false;
+    }
+
+
+    const parts =
+        value.split("-");
+
+
+    if (parts.length === 1) {
+        return true;
+    }
+
+
+    const month =
+        Number(parts[1]);
+
+
+    if (
+        month < 1 ||
+        month > 12
+    ) {
+        return false;
+    }
+
+
+    if (parts.length === 2) {
+        return true;
+    }
+
+
+    const date =
+        new Date(
+            `${value}T00:00:00Z`
+        );
+
+
+    return (
+        !Number.isNaN(date.getTime()) &&
+        date.toISOString().slice(0, 10) === value
+    );
+
+}
+
+
+function saveReadingDates(
+    workId
+) {
+
+    const changes = {};
+
+
+    READING_DATE_FIELDS.forEach(
+        (field) => {
+
+            const input =
+                document.querySelector(
+                    `[data-reading-date="${field}"]`
+                );
+
+
+            if (!input) {
+                return;
+            }
+
+
+            changes[field] =
+                isValidReadingDate(input.value)
+                    ? input.value
+                    : null;
+
+        }
+    );
+
+
+    saveLibraryWork(
+        workId,
+        changes
+    );
+
+
+    updateReadingDateControls();
 
     updateLibraryButtons();
 
@@ -741,9 +860,189 @@ function initializePersonalControls() {
 
     initializeLibraryControls();
 
+    initializeReadingDateControls();
+
     initializeRatingControls();
 
     initializeReviewControls();
+
+}
+
+
+
+/* ========================================
+   READING DATE CONTROLS
+   ======================================== */
+
+function initializeReadingDateControls() {
+
+    const form =
+        document.getElementById(
+            "reading-dates-form"
+        );
+
+
+    const workId =
+        getCurrentLibraryWorkId();
+
+
+    if (
+        !form ||
+        !workId
+    ) {
+        return;
+    }
+
+
+    form.addEventListener(
+        "submit",
+        (event) => {
+
+            event.preventDefault();
+
+            saveReadingDates(
+                workId
+            );
+
+        }
+    );
+
+
+    updateReadingDateControls();
+
+}
+
+
+function updateReadingDateControls() {
+
+    const workId =
+        getCurrentLibraryWorkId();
+
+
+    if (!workId) {
+        return;
+    }
+
+
+    const savedWork =
+        getSavedLibraryWork(
+            workId
+        );
+
+
+    READING_DATE_FIELDS.forEach(
+        (field) => {
+
+            const input =
+                document.querySelector(
+                    `[data-reading-date="${field}"]`
+                );
+
+
+            if (input) {
+
+                input.value =
+                    isValidReadingDate(
+                        savedWork?.[field]
+                    )
+                        ? savedWork[field]
+                        : "";
+
+            }
+
+        }
+    );
+
+
+    const message =
+        document.getElementById(
+            "reading-dates-message"
+        );
+
+
+    if (message) {
+
+        const datePieces =
+            getReadingDateSummary(
+                savedWork
+            );
+
+
+        message.textContent =
+            datePieces.length > 0
+                ? datePieces.join(" · ")
+                : "Reading dates are optional.";
+
+    }
+
+}
+
+
+function getReadingDateSummary(
+    savedWork
+) {
+
+    if (!savedWork) {
+        return [];
+    }
+
+
+    return [
+        ["Started", savedWork.dateStarted],
+        ["Finished", savedWork.dateFinished],
+        ["Abandoned", savedWork.dateAbandoned]
+    ]
+        .filter(
+            ([, value]) => isValidReadingDate(value)
+        )
+        .map(
+            ([label, value]) => {
+
+                return (
+                    `${label} ${formatReadingDate(value)}`
+                );
+
+            }
+        );
+
+}
+
+
+function formatReadingDate(
+    value
+) {
+
+    const parts =
+        value.split("-");
+
+
+    if (parts.length === 1) {
+        return value;
+    }
+
+
+    const date =
+        new Date(
+            `${value}${
+                parts.length === 2
+                    ? "-01"
+                    : ""
+            }T00:00:00Z`
+        );
+
+
+    return new Intl.DateTimeFormat(
+        undefined,
+        {
+            year: "numeric",
+            month: "short",
+            day:
+                parts.length === 3
+                    ? "numeric"
+                    : undefined,
+            timeZone: "UTC"
+        }
+    ).format(date);
 
 }
 
@@ -954,7 +1253,10 @@ function updateLibraryMessage(
             "Currently Reading",
 
         "read":
-            "Read"
+            "Read",
+
+        "dnf":
+            "Did Not Finish"
 
     };
 
