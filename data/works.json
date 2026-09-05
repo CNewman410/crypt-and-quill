@@ -196,5 +196,506 @@
             "Divine Farce"
         ],
         "relationships": {}
+    },
+    {
+        "id": "cq-short-stay-in-hell",
+        "title": "A Short Stay in Hell",
+        "author": "Steven L. Peck",
+        "year": 2012,
+        "type": "Novella",
+        "genres": [
+            "Horror",
+            "Speculative Fiction"
+        ],
+        "subgenres": [],
+        "themes": [
+            "Strange Afterlife",
+            "Infinity",
+            "Impossible Places",
+            "Existential Horror"
+        ],
+        "searchAliases": [
+            "Short Stay in Hell"
+        ],
+        "relationships": {}
+    },
+    {
+        "id": "cq-between-two-fires",
+        "title": "Between Two Fires",
+        "author": "Christopher Buehlman",
+        "year": 2012,
+        "type": "Novel",
+        "genres": [
+            "Horror",
+            "Fantasy"
+        ],
+        "subgenres": [
+            "Historical Horror",
+            "Religious Horror"
+        ],
+        "themes": [
+            "Religion",
+            "Apocalypse",
+            "Mortality",
+            "Redemption"
+        ],
+        "searchAliases": [],
+        "relationships": {}
+    },
+    {
+        "id": "cq-house-of-leaves",
+        "title": "House of Leaves",
+        "author": "Mark Z. Danielewski",
+        "year": 2000,
+        "type": "Novel",
+        "genres": [
+            "Horror",
+            "Literary Fiction"
+        ],
+        "subgenres": [
+            "Psychological Horror"
+        ],
+        "themes": [
+            "Impossible Places",
+            "Reality Breakdown",
+            "Obsession",
+            "Identity"
+        ],
+        "searchAliases": [],
+        "relationships": {}
+    },
+    {
+        "id": "cq-the-fisherman",
+        "title": "The Fisherman",
+        "author": "John Langan",
+        "year": 2016,
+        "type": "Novel",
+        "genres": [
+            "Horror",
+            "Weird Fiction"
+        ],
+        "subgenres": [
+            "Cosmic Horror"
+        ],
+        "themes": [
+            "Grief",
+            "Forbidden Knowledge",
+            "Mortality",
+            "Reality Breakdown"
+        ],
+        "searchAliases": [
+            "Fisherman"
+        ],
+        "relationships": {}
+    },
+    {
+        "id": "cq-the-willows",
+        "title": "The Willows",
+        "author": "Algernon Blackwood",
+        "year": 1907,
+        "type": "Novella",
+        "genres": [
+            "Horror",
+            "Weird Fiction"
+        ],
+        "subgenres": [
+            "Cosmic Horror"
+        ],
+        "themes": [
+            "Isolation",
+            "Nature",
+            "Reality Breakdown",
+            "Existential Horror"
+        ],
+        "searchAliases": [
+            "Willows"
+        ],
+        "relationships": {}
+    },
+    {
+        "id": "cq-haunting-of-hill-house",
+        "title": "The Haunting of Hill House",
+        "author": "Shirley Jackson",
+        "year": 1959,
+        "type": "Novel",
+        "genres": [
+            "Horror"
+        ],
+        "subgenres": [
+            "Gothic",
+            "Psychological Horror"
+        ],
+        "themes": [
+            "Haunted Places",
+            "Isolation",
+            "Identity",
+            "Reality Breakdown"
+        ],
+        "searchAliases": [
+            "Haunting of Hill House",
+            "Hill House"
+        ],
+        "relationships": {}
+    },
+    {
+        "id": "cq-we-have-always-lived-in-the-castle",
+        "title": "We Have Always Lived in the Castle",
+        "author": "Shirley Jackson",
+        "year": 1962,
+        "type": "Novel",
+        "genres": [
+            "Horror",
+            "Literary Fiction"
+        ],
+        "subgenres": [
+            "Gothic"
+        ],
+        "themes": [
+            "Isolation",
+            "Family",
+            "Paranoia",
+            "Identity"
+        ],
+        "searchAliases": [
+            "We Have Always Lived in Castle"
+        ],
+        "relationships": {}
+    },
+    {
+        "id": "cq-dracula",
+        "title": "Dracula",
+        "author": "Bram Stoker",
+        "year": 1897,
+        "type": "Novel",
+        "genres": [
+            "Horror"
+        ],
+        "subgenres": [
+            "Gothic",
+            "Vampire Horror"
+        ],
+        "themes": [
+            "Mortality",
+            "Religion",
+            "Identity",
+            "Forbidden Knowledge"
+        ],
+        "searchAliases": [],
+        "relationships": {}
+    },
+    {
+        "id": "cq-the-shining",
+        "title": "The Shining",
+        "author": "Stephen King",
+        "year": 1977,
+        "type": "Novel",
+        "genres": [
+            "Horror"
+        ],
+        "subgenres": [
+            "Psychological Horror",
+            "Supernatural Horror"
+        ],
+        "themes": [
+            "Haunted Places",
+            "Isolation",
+            "Family",
+            "Madness"
+        ],
+        "searchAliases": [
+            "Shining"
+        ],
+        "relationships": {}
+    },
+    {
+        "id": "cq-something-wicked-this-way-comes",
+        "title": "Something Wicked This Way Comes",
+        "author": "Ray Bradbury",
+        "year": 1962,
+        "type": "Novel",
+        "genres": [
+            "Horror",
+            "Fantasy"
+        ],
+        "subgenres": [
+            "Dark Fantasy",
+            "Carnival Horror"
+        ],
+        "themes": [
+            "Temptation",
+            "Aging",
+            "Mortality",
+            "Good and Evil"
+        ],
+        "searchAliases": [
+            "Something Wicked"
+        ],
+        "relationships": {}
+    },
+    {
+        "id": "cq-i-am-legend",
+        "title": "I Am Legend",
+        "author": "Richard Matheson",
+        "year": 1954,
+        "type": "Novel",
+        "genres": [
+            "Horror",
+            "Science Fiction"
+        ],
+        "subgenres": [
+            "Post-Apocalyptic Horror"
+        ],
+        "themes": [
+            "Isolation",
+            "Identity",
+            "Survival",
+            "Societal Collapse"
+        ],
+        "searchAliases": [
+            "I Am Legend Richard Matheson"
+        ],
+        "relationships": {}
+    },
+    {
+        "id": "cq-library-at-mount-char",
+        "title": "The Library at Mount Char",
+        "author": "Scott Hawkins",
+        "year": 2015,
+        "type": "Novel",
+        "genres": [
+            "Fantasy",
+            "Horror"
+        ],
+        "subgenres": [
+            "Dark Fantasy"
+        ],
+        "themes": [
+            "Forbidden Knowledge",
+            "Power",
+            "Identity",
+            "Reality Breakdown"
+        ],
+        "searchAliases": [
+            "Library at Mount Char"
+        ],
+        "relationships": {}
+    },
+    {
+        "id": "cq-the-terror",
+        "title": "The Terror",
+        "author": "Dan Simmons",
+        "year": 2007,
+        "type": "Novel",
+        "genres": [
+            "Horror",
+            "Historical Fiction"
+        ],
+        "subgenres": [
+            "Historical Horror",
+            "Survival Horror"
+        ],
+        "themes": [
+            "Isolation",
+            "Survival",
+            "Nature",
+            "Mortality"
+        ],
+        "searchAliases": [
+            "Terror Dan Simmons"
+        ],
+        "relationships": {}
+    },
+    {
+        "id": "cq-ghost-story",
+        "title": "Ghost Story",
+        "author": "Peter Straub",
+        "year": 1979,
+        "type": "Novel",
+        "genres": [
+            "Horror"
+        ],
+        "subgenres": [
+            "Supernatural Horror"
+        ],
+        "themes": [
+            "Memory",
+            "Guilt",
+            "Secrets",
+            "Mortality"
+        ],
+        "searchAliases": [
+            "Ghost Story Straub"
+        ],
+        "relationships": {}
+    },
+    {
+        "id": "cq-the-troop",
+        "title": "The Troop",
+        "author": "Nick Cutter",
+        "year": 2014,
+        "type": "Novel",
+        "genres": [
+            "Horror"
+        ],
+        "subgenres": [
+            "Body Horror"
+        ],
+        "themes": [
+            "Isolation",
+            "Infection",
+            "Survival",
+            "Mortality"
+        ],
+        "searchAliases": [
+            "Troop Nick Cutter"
+        ],
+        "relationships": {}
+    },
+    {
+        "id": "cq-the-reformatory",
+        "title": "The Reformatory",
+        "author": "Tananarive Due",
+        "year": 2023,
+        "type": "Novel",
+        "genres": [
+            "Horror",
+            "Historical Fiction"
+        ],
+        "subgenres": [
+            "Historical Horror",
+            "Supernatural Horror"
+        ],
+        "themes": [
+            "Institutional Violence",
+            "Family",
+            "Grief",
+            "Haunted Places"
+        ],
+        "searchAliases": [
+            "Reformatory"
+        ],
+        "relationships": {}
+    },
+    {
+        "id": "cq-slewfoot",
+        "title": "Slewfoot",
+        "author": "Brom",
+        "year": 2021,
+        "type": "Novel",
+        "genres": [
+            "Horror",
+            "Fantasy"
+        ],
+        "subgenres": [
+            "Folk Horror",
+            "Witch Horror"
+        ],
+        "themes": [
+            "Religion",
+            "Persecution",
+            "Nature",
+            "Power"
+        ],
+        "searchAliases": [
+            "Slewfoot A Tale of Bewitchery"
+        ],
+        "relationships": {}
+    },
+    {
+        "id": "cq-hex",
+        "title": "Hex",
+        "author": "Thomas Olde Heuvelt",
+        "year": 2013,
+        "type": "Novel",
+        "genres": [
+            "Horror"
+        ],
+        "subgenres": [
+            "Witch Horror"
+        ],
+        "themes": [
+            "Community",
+            "Surveillance",
+            "Curse",
+            "Isolation"
+        ],
+        "searchAliases": [
+            "HEX",
+            "Hex Thomas Olde Heuvelt"
+        ],
+        "relationships": {}
+    },
+    {
+        "id": "cq-the-croning",
+        "title": "The Croning",
+        "author": "Laird Barron",
+        "year": 2012,
+        "type": "Novel",
+        "genres": [
+            "Horror",
+            "Weird Fiction"
+        ],
+        "subgenres": [
+            "Cosmic Horror"
+        ],
+        "themes": [
+            "Memory",
+            "Identity",
+            "Forbidden Knowledge",
+            "Ancient Powers"
+        ],
+        "searchAliases": [
+            "Croning"
+        ],
+        "relationships": {}
+    },
+    {
+        "id": "cq-secret-of-ventriloquism",
+        "title": "The Secret of Ventriloquism",
+        "author": "Jon Padgett",
+        "year": 2016,
+        "type": "Collection",
+        "genres": [
+            "Horror",
+            "Weird Fiction"
+        ],
+        "subgenres": [
+            "Psychological Horror"
+        ],
+        "themes": [
+            "Identity",
+            "Reality Breakdown",
+            "Philosophical Horror",
+            "Obsession"
+        ],
+        "searchAliases": [
+            "Secret of Ventriloquism"
+        ],
+        "relationships": {}
+    },
+    {
+        "id": "cq-monkeys-paw",
+        "title": "The Monkey's Paw",
+        "author": "W. W. Jacobs",
+        "year": 1902,
+        "type": "Short Story",
+        "genres": [
+            "Horror"
+        ],
+        "subgenres": [
+            "Supernatural Horror"
+        ],
+        "themes": [
+            "Fate",
+            "Grief",
+            "Mortality",
+            "Unintended Consequences"
+        ],
+        "searchAliases": [
+            "The Monkeys Paw",
+            "Monkeys Paw",
+            "Monkey's Paw"
+        ],
+        "relationships": {}
     }
 ]
