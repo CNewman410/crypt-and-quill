@@ -364,7 +364,7 @@
                                 </legend>
 
                                 <p class="reading-dates-help">
-                                    Add any dates you remember. All fields are optional.
+                                    Add any dates you remember. Use YYYY, YYYY-MM, or YYYY-MM-DD; all fields are optional.
                                 </p>
 
                                 <div class="reading-date-fields">
@@ -372,7 +372,9 @@
                                     <label>
                                         <span>Date Started</span>
                                         <input
-                                            type="date"
+                                            type="text"
+                                            placeholder="YYYY, YYYY-MM, or YYYY-MM-DD"
+                                            pattern="\d{4}(-\d{2}(-\d{2})?)?"
                                             data-reading-date="dateStarted"
                                         >
                                     </label>
@@ -380,7 +382,9 @@
                                     <label>
                                         <span>Date Finished</span>
                                         <input
-                                            type="date"
+                                            type="text"
+                                            placeholder="YYYY, YYYY-MM, or YYYY-MM-DD"
+                                            pattern="\d{4}(-\d{2}(-\d{2})?)?"
                                             data-reading-date="dateFinished"
                                         >
                                     </label>
@@ -388,7 +392,9 @@
                                     <label>
                                         <span>DNF / Abandoned Date</span>
                                         <input
-                                            type="date"
+                                            type="text"
+                                            placeholder="YYYY, YYYY-MM, or YYYY-MM-DD"
+                                            pattern="\d{4}(-\d{2}(-\d{2})?)?"
                                             data-reading-date="dateAbandoned"
                                         >
                                     </label>
