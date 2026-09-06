@@ -72,7 +72,6 @@ function normalizeCuratedWork(work) {
             work.coverId
         );
 
-
     return {
 
         source: "crypt-and-quill",
