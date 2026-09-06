@@ -451,14 +451,58 @@ function getOpenLibraryWorkCoverIds(work) {
 
 function extractOpenLibraryText(value) {
     if (typeof value === "string") {
-        return value.trim();
+        return cleanOpenLibraryDescription(value);
     }
 
     if (typeof value?.value === "string") {
-        return value.value.trim();
+        return cleanOpenLibraryDescription(value.value);
     }
 
     return "";
+}
+
+
+/**
+ * Keep Open Library's useful description prose while removing common
+ * formatting and collection-reference artifacts from that field.
+ */
+function cleanOpenLibraryDescription(value) {
+    if (typeof value !== "string") {
+        return "";
+    }
+
+    let description = value.trim();
+
+    if (!description) {
+        return "";
+    }
+
+    const containedInHeading =
+        /^[ \t]*(?:also[ \t]+)?contained[ \t]+in:[ \t]*$/gim;
+
+    let headingMatch;
+
+    while ((headingMatch = containedInHeading.exec(description))) {
+        if (description.slice(0, headingMatch.index).trim()) {
+            description = description.slice(0, headingMatch.index);
+            break;
+        }
+    }
+
+    /* Remove trailing list entries that contain only an external reference. */
+    description = description.replace(
+        /(?:\n[ \t]*[-*+][ \t]+(?:\[[^\]\n]+\]\(https?:\/\/[^)\n]+\)|https?:\/\/\S+)[ \t]*)+$/gi,
+        ""
+    );
+
+    description = description
+        .replace(/^[ \t]*(?:-{3,}|\*{3,}|_{3,})[ \t]*$/gm, "")
+        .replace(/\[([^\]\n]+)\]\(https?:\/\/[^)\n]+\)/gi, "$1")
+        .replace(/(?:[ \t]*\n[ \t]*)?https?:\/\/\S+[ \t]*$/gi, "")
+        .replace(/\n[ \t]*\n(?:[ \t]*\n)+/g, "\n\n")
+        .trim();
+
+    return description;
 }
 
 
