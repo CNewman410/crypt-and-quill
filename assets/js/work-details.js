@@ -497,6 +497,22 @@ function createCuratedDetailsModel(
             : curatedWork.subjects || [];
 
 
+    const automaticCoverId =
+        normalizeOpenLibraryCoverId(
+            curatedWork.automaticCoverId
+        ) ||
+        workCoverIds
+            .map(normalizeOpenLibraryCoverId)
+            .find(Boolean) ||
+        null;
+
+
+    const preferredCoverId =
+        normalizeOpenLibraryCoverId(
+            curatedWork.preferredCoverId
+        );
+
+
     return {
 
         ...curatedWork,
@@ -505,9 +521,14 @@ function createCuratedDetailsModel(
             "crypt-and-quill",
 
         coverId:
-            curatedWork.coverId ||
-            workCoverIds[0] ||
-            null,
+            preferredCoverId ||
+            automaticCoverId,
+
+        preferredCoverId:
+            preferredCoverId,
+
+        automaticCoverId:
+            automaticCoverId,
 
         description:
             curatedWork.description ||
@@ -894,20 +915,17 @@ function renderCover(
         "";
 
 
-    if (
-        work.coverId
-    ) {
+    const coverCandidates =
+        getWorkCoverCandidates(
+            work
+        );
+
+
+    if (coverCandidates.length > 0) {
 
         const image =
             document.createElement(
                 "img"
-            );
-
-
-        image.src =
-            getOpenLibraryCoverURL(
-                work.coverId,
-                "L"
             );
 
 
@@ -919,14 +937,44 @@ function renderCover(
             "work-details-cover-image";
 
 
+        let coverIndex = 0;
+
+
         image.addEventListener(
             "error",
             () => {
+
+                coverIndex += 1;
+
+
+                if (
+                    coverIndex <
+                    coverCandidates.length
+                ) {
+
+                    image.src =
+                        getOpenLibraryCoverURL(
+                            coverCandidates[coverIndex],
+                            "L"
+                        );
+
+
+                    return;
+
+                }
+
 
                 renderDetailsCoverPlaceholder();
 
             }
         );
+
+
+        image.src =
+            getOpenLibraryCoverURL(
+                coverCandidates[coverIndex],
+                "L"
+            );
 
 
         detailsCover.appendChild(

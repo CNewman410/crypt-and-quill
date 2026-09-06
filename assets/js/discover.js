@@ -1600,9 +1600,13 @@ function createWorkCard(work) {
         "work-card-cover";
 
 
-    if (
-        work.coverId
-    ) {
+    const coverCandidates =
+        getWorkCoverCandidates(
+            work
+        );
+
+
+    if (coverCandidates.length > 0) {
 
         const image =
             document.createElement(
@@ -1614,13 +1618,6 @@ function createWorkCard(work) {
             "work-cover-image";
 
 
-        image.src =
-            getOpenLibraryCoverURL(
-                work.coverId,
-                "L"
-            );
-
-
         image.alt =
             `Cover of ${work.title}`;
 
@@ -1629,9 +1626,31 @@ function createWorkCard(work) {
             "lazy";
 
 
+        let coverIndex = 0;
+
+
         image.addEventListener(
             "error",
             () => {
+
+                coverIndex += 1;
+
+
+                if (
+                    coverIndex <
+                    coverCandidates.length
+                ) {
+
+                    image.src =
+                        getOpenLibraryCoverURL(
+                            coverCandidates[coverIndex],
+                            "L"
+                        );
+
+
+                    return;
+
+                }
 
                 coverWrapper.innerHTML =
                     "";
@@ -1643,6 +1662,13 @@ function createWorkCard(work) {
 
             }
         );
+
+
+        image.src =
+            getOpenLibraryCoverURL(
+                coverCandidates[coverIndex],
+                "L"
+            );
 
 
         coverWrapper.appendChild(

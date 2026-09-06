@@ -206,9 +206,9 @@ Implement optional curated field:
 
 Behavior:
 
-1. Preferred cover if defined
-2. Best automatic Open Library cover match
-3. Crypt & Quill no-cover placeholder
+- [x] Preferred cover if defined
+- [x] Best automatic Open Library cover match
+- [x] Crypt & Quill no-cover placeholder
 
 ## Cover Selection
 
