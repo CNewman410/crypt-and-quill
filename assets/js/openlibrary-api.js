@@ -245,8 +245,8 @@ async function getOpenLibraryRepresentativeEdition(workKey, limit = 50) {
 
 
 /**
- * Prefer complete, English-language records. Ties preserve Open Library's
- * ordering, which generally places its most useful edition candidates first.
+ * Prefer complete, English-language print records. Ties preserve Open
+ * Library's ordering, which generally places useful candidates first.
  */
 function selectRepresentativeOpenLibraryEdition(editions) {
     let selectedEdition = null;
@@ -288,6 +288,7 @@ function normalizeOpenLibraryEdition(edition) {
             ? edition.number_of_pages
             : null,
         languages: languageKeys.map(formatOpenLibraryLanguage),
+        physicalFormat: getOpenLibraryEditionFormat(edition),
         editionId: editionId
     };
 }
@@ -305,7 +306,90 @@ function scoreOpenLibraryEdition(edition) {
     if (edition.languages.length > 0) score += 2;
     if (edition.languages.includes("English")) score += 2;
 
+    /*
+     * Format is a preference rather than a filter. A future curated
+     * preferredEditionId can therefore remain authoritative, and an audio
+     * or electronic edition can still be used when it is the only useful
+     * record available.
+     */
+    const formatCategory = classifyOpenLibraryEditionFormat(
+        edition.physicalFormat
+    );
+
+    if (formatCategory === "print") score += 12;
+    if (formatCategory === "ebook") score -= 2;
+    if (formatCategory === "audio") score -= 20;
+
     return score;
+}
+
+
+function getOpenLibraryEditionFormat(edition) {
+    const formatFields = [
+        edition.physical_format,
+        edition.format,
+        edition.media_type
+    ];
+
+    const format = formatFields.find((value) => {
+        return typeof value === "string" && value.trim();
+    });
+
+    return format ? format.trim() : null;
+}
+
+
+function classifyOpenLibraryEditionFormat(format) {
+    const normalizedFormat = String(format || "")
+        .trim()
+        .toLowerCase();
+
+    if (!normalizedFormat) {
+        return "unknown";
+    }
+
+    const audioTerms = [
+        "audio",
+        "cd audio",
+        "mp3",
+        "cassette",
+        "talking book"
+    ];
+
+    if (audioTerms.some((term) => normalizedFormat.includes(term))) {
+        return "audio";
+    }
+
+    const ebookTerms = [
+        "ebook",
+        "e-book",
+        "electronic",
+        "kindle",
+        "digital"
+    ];
+
+    if (ebookTerms.some((term) => normalizedFormat.includes(term))) {
+        return "ebook";
+    }
+
+    const printTerms = [
+        "hardcover",
+        "hardback",
+        "paperback",
+        "mass market",
+        "trade paper",
+        "library binding",
+        "board book",
+        "spiral-bound",
+        "spiral bound",
+        "print"
+    ];
+
+    if (printTerms.some((term) => normalizedFormat.includes(term))) {
+        return "print";
+    }
+
+    return "unknown";
 }
 
 
