@@ -227,60 +227,8 @@ async function loadCuratedWorkDetails(
 
     try {
 
-        /*
-         * Find the corresponding Open Library
-         * work so we can enrich this page.
-         */
-        const searchQuery =
-            `${curatedWork.title} ${curatedWork.author}`;
-
-
-        const searchResults =
-            await searchOpenLibrary(
-                searchQuery,
-                12
-            );
-
-
-        const enrichedWork =
-            enrichCuratedWorkFromOpenLibrary(
-                curatedWork,
-                searchResults
-            );
-
-
-        let openLibraryWork =
-            null;
-
-
-        if (
-            enrichedWork.openLibraryKey
-        ) {
-
-            openLibraryWork =
-                await getOpenLibraryWork(
-                    enrichedWork.openLibraryKey
-                );
-
-        }
-
-
-        const representativeEdition =
-            await loadRepresentativeEdition(
-                enrichedWork.openLibraryKey
-            );
-
-
-        const detailsModel =
-            createCuratedDetailsModel(
-                enrichedWork,
-                openLibraryWork,
-                representativeEdition
-            );
-
-
-        renderWorkDetails(
-            detailsModel
+        await progressivelyEnrichCuratedWork(
+            curatedWork
         );
 
     }
@@ -296,11 +244,132 @@ async function loadCuratedWorkDetails(
         );
 
 
-        renderWorkDetails(
-            curatedWork
+    }
+
+
+    detailsStatus.hidden =
+        true;
+
+}
+
+
+/**
+ * Add Open Library metadata without making fast enrichment wait for slower
+ * requests. Each renderer owns a separate part of the page so an edition
+ * response cannot be erased by a later work-record response.
+ */
+async function progressivelyEnrichCuratedWork(
+    curatedWork
+) {
+
+    let enrichedWork =
+        curatedWork;
+
+
+    if (!curatedWork.openLibraryKey) {
+
+        const searchQuery =
+            `${curatedWork.title} ${curatedWork.author}`;
+
+
+        const searchResults =
+            await searchOpenLibrary(
+                searchQuery,
+                12
+            );
+
+
+        enrichedWork =
+            enrichCuratedWorkFromOpenLibrary(
+                curatedWork,
+                searchResults
+            );
+
+
+        /* Search results already contain usable cover metadata. */
+        renderCover(
+            enrichedWork
+        );
+
+        renderOpenLibraryLink(
+            enrichedWork
         );
 
     }
+
+
+    if (!enrichedWork.openLibraryKey) {
+        return;
+    }
+
+
+    /* Start both network operations before awaiting either one. */
+    const workRequest =
+        getOpenLibraryWork(
+            enrichedWork.openLibraryKey
+        );
+
+
+    const editionRequest =
+        loadRepresentativeEdition(
+            enrichedWork.openLibraryKey
+        );
+
+
+    const renderWorkRequest =
+        workRequest
+            .then((openLibraryWork) => {
+
+                const detailsModel =
+                    createCuratedDetailsModel(
+                        enrichedWork,
+                        openLibraryWork,
+                        null
+                    );
+
+
+                renderCuratedOpenLibraryEnrichment(
+                    detailsModel
+                );
+
+            })
+            .catch((error) => {
+
+                console.warn(
+                    "Open Library work lookup failed:",
+                    enrichedWork.openLibraryKey,
+                    error
+                );
+
+            });
+
+
+    const renderEditionRequest =
+        editionRequest.then((edition) => {
+
+            renderEditionMetadata(
+                edition
+            );
+
+        });
+
+
+    await Promise.all([
+        renderWorkRequest,
+        renderEditionRequest
+    ]);
+
+}
+
+
+function renderCuratedOpenLibraryEnrichment(
+    work
+) {
+
+    renderCover(work);
+    renderDescription(work);
+    renderSubjects(work);
+    renderOpenLibraryLink(work);
 
 }
 

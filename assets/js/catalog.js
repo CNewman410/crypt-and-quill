@@ -117,6 +117,12 @@ function normalizeCuratedWork(work) {
                 ? work.relationships
                 : {},
 
+        description:
+            typeof work.description === "string" &&
+            work.description.trim()
+                ? work.description.trim()
+                : null,
+
         subjects: [],
 
         preferredCoverId:
@@ -130,7 +136,10 @@ function normalizeCuratedWork(work) {
             automaticCoverId,
 
         openLibraryKey:
-            work.openLibraryKey || null,
+            typeof work.openLibraryKey === "string" &&
+            work.openLibraryKey.trim()
+                ? work.openLibraryKey.trim()
+                : null,
 
         authorKeys: [],
 
@@ -460,6 +469,7 @@ function enrichCuratedWorkFromOpenLibrary(
             automaticCoverId,
 
         openLibraryKey:
+            curatedWork.openLibraryKey ||
             bestMatch?.openLibraryKey ||
             null,
 
@@ -476,6 +486,7 @@ function enrichCuratedWorkFromOpenLibrary(
             null,
 
         matchedOpenLibraryKey:
+            curatedWork.openLibraryKey ||
             bestMatch?.openLibraryKey ||
             null
 
