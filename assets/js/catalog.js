@@ -61,6 +61,18 @@ async function loadCuratedWorks() {
  */
 function normalizeCuratedWork(work) {
 
+    const preferredCoverId =
+        normalizeOpenLibraryCoverId(
+            work.preferredCoverId
+        );
+
+
+    const automaticCoverId =
+        normalizeOpenLibraryCoverId(
+            work.coverId
+        );
+
+
     return {
 
         source: "crypt-and-quill",
@@ -108,8 +120,15 @@ function normalizeCuratedWork(work) {
 
         subjects: [],
 
+        preferredCoverId:
+            preferredCoverId,
+
+        automaticCoverId:
+            automaticCoverId,
+
         coverId:
-            work.coverId || null,
+            preferredCoverId ||
+            automaticCoverId,
 
         openLibraryKey:
             work.openLibraryKey || null,
@@ -405,14 +424,41 @@ function enrichCuratedWorkFromOpenLibrary(
         );
 
 
+    const automaticCoverId =
+        normalizeOpenLibraryCoverId(
+            bestCoverMatch?.coverId
+        ) ||
+        normalizeOpenLibraryCoverId(
+            curatedWork.automaticCoverId
+        ) ||
+        (
+            curatedWork.preferredCoverId
+                ? null
+                : normalizeOpenLibraryCoverId(
+                    curatedWork.coverId
+                )
+        );
+
+
+    const preferredCoverId =
+        normalizeOpenLibraryCoverId(
+            curatedWork.preferredCoverId
+        );
+
+
     return {
 
         ...curatedWork,
 
         coverId:
-            bestCoverMatch?.coverId ||
-            curatedWork.coverId ||
-            null,
+            preferredCoverId ||
+            automaticCoverId,
+
+        preferredCoverId:
+            preferredCoverId,
+
+        automaticCoverId:
+            automaticCoverId,
 
         openLibraryKey:
             bestMatch?.openLibraryKey ||
@@ -435,6 +481,64 @@ function enrichCuratedWorkFromOpenLibrary(
             null
 
     };
+
+}
+
+
+/**
+ * Open Library cover IDs are positive integers.
+ * Invalid editorial values are ignored so automatic
+ * matching can continue to work normally.
+ */
+function normalizeOpenLibraryCoverId(value) {
+
+    const coverId =
+        Number(value);
+
+
+    return (
+        Number.isInteger(coverId) &&
+        coverId > 0
+    )
+        ? coverId
+        : null;
+
+}
+
+
+/**
+ * Return covers in display order. Renderers can try
+ * each URL in turn when an image fails to load.
+ */
+function getWorkCoverCandidates(work) {
+
+    if (!work) {
+        return [];
+    }
+
+
+    const candidates =
+        work.source === "crypt-and-quill"
+            ? [
+                work.preferredCoverId,
+                work.automaticCoverId,
+                work.coverId
+            ]
+            : [work.coverId];
+
+
+    return candidates
+        .map(normalizeOpenLibraryCoverId)
+        .filter(
+            (coverId, index, coverIds) => {
+
+                return (
+                    coverId &&
+                    coverIds.indexOf(coverId) === index
+                );
+
+            }
+        );
 
 }
 
