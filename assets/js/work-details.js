@@ -483,7 +483,7 @@ function createCuratedDetailsModel(
         );
 
 
-    const description =
+    const openLibraryDescription =
         extractOpenLibraryText(
             openLibraryWork?.description
         );
@@ -510,7 +510,8 @@ function createCuratedDetailsModel(
             null,
 
         description:
-            description,
+            curatedWork.description ||
+            openLibraryDescription,
 
         subjects:
             subjects,
