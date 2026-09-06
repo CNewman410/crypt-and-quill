@@ -159,13 +159,13 @@ Improve the actual archive records using Open Library edition data.
 
 Add optional display for:
 
-- [ ] publisher
-- [ ] edition publication year
-- [ ] ISBN-10
-- [ ] ISBN-13
-- [ ] page count
-- [ ] edition language
-- [ ] edition identifier
+- [x] publisher
+- [x] edition publication year
+- [x] ISBN-10
+- [x] ISBN-13
+- [x] page count
+- [x] edition language
+- [x] edition identifier
 
 ## Original Work vs Edition
 

@@ -63,6 +63,16 @@ const descriptionElement =
         "work-description"
     );
 
+const editionSection =
+    document.getElementById(
+        "edition-section"
+    );
+
+const editionMetadata =
+    document.getElementById(
+        "edition-metadata"
+    );
+
 const relationshipsSection =
     document.getElementById(
         "relationships-section"
@@ -255,10 +265,17 @@ async function loadCuratedWorkDetails(
         }
 
 
+        const representativeEdition =
+            await loadRepresentativeEdition(
+                enrichedWork.openLibraryKey
+            );
+
+
         const detailsModel =
             createCuratedDetailsModel(
                 enrichedWork,
-                openLibraryWork
+                openLibraryWork,
+                representativeEdition
             );
 
 
@@ -320,16 +337,60 @@ async function loadExternalWorkDetails(
         );
 
 
+    const representativeEdition =
+        await loadRepresentativeEdition(
+            work.key
+        );
+
+
     const detailsModel =
         createExternalDetailsModel(
             work,
-            authors
+            authors,
+            representativeEdition
         );
 
 
     renderWorkDetails(
         detailsModel
     );
+
+}
+
+
+
+/* ========================================
+   EDITION LOADING
+   ======================================== */
+
+async function loadRepresentativeEdition(
+    openLibraryKey
+) {
+
+    if (!openLibraryKey) {
+        return null;
+    }
+
+
+    try {
+
+        return await getOpenLibraryRepresentativeEdition(
+            openLibraryKey
+        );
+
+    }
+    catch (error) {
+
+        console.warn(
+            "Edition lookup failed:",
+            openLibraryKey,
+            error
+        );
+
+
+        return null;
+
+    }
 
 }
 
@@ -412,7 +473,8 @@ async function loadOpenLibraryAuthors(
 
 function createCuratedDetailsModel(
     curatedWork,
-    openLibraryWork
+    openLibraryWork,
+    representativeEdition
 ) {
 
     const workCoverIds =
@@ -455,6 +517,10 @@ function createCuratedDetailsModel(
 
         firstPublishDate:
             openLibraryWork?.first_publish_date ||
+            null,
+
+        representativeEdition:
+            representativeEdition ||
             null
 
     };
@@ -469,7 +535,8 @@ function createCuratedDetailsModel(
 
 function createExternalDetailsModel(
     openLibraryWork,
-    authors
+    authors,
+    representativeEdition
 ) {
 
     const coverIds =
@@ -554,6 +621,10 @@ function createExternalDetailsModel(
 
         coverId:
             coverIds[0] ||
+            null,
+
+        representativeEdition:
+            representativeEdition ||
             null
 
     };
@@ -613,6 +684,11 @@ function renderWorkDetails(
     );
 
 
+    renderEditionMetadata(
+        work.representativeEdition
+    );
+
+
     renderRelationships(
         work
     );
@@ -634,6 +710,144 @@ function renderWorkDetails(
 
     detailsPage.hidden =
         false;
+
+}
+
+
+
+/* ========================================
+   REPRESENTATIVE EDITION
+   ======================================== */
+
+function renderEditionMetadata(
+    edition
+) {
+
+    editionMetadata.innerHTML =
+        "";
+
+
+    if (!edition) {
+
+        editionSection.hidden =
+            true;
+
+        return;
+
+    }
+
+
+    addEditionMetadataItem(
+        "Publisher",
+        edition.publisher
+    );
+
+    addEditionMetadataItem(
+        "Edition Published",
+        edition.publishDate
+    );
+
+    addEditionMetadataItem(
+        "ISBN-10",
+        edition.isbn10
+    );
+
+    addEditionMetadataItem(
+        "ISBN-13",
+        edition.isbn13
+    );
+
+    addEditionMetadataItem(
+        "Page Count",
+        edition.pageCount
+    );
+
+    addEditionMetadataItem(
+        "Language",
+        edition.languages?.join(", ")
+    );
+
+    addEditionMetadataItem(
+        "Open Library Edition",
+        edition.editionId,
+        getOpenLibraryEditionPageURL(
+            edition.editionId
+        )
+    );
+
+
+    editionSection.hidden =
+        editionMetadata.children.length === 0;
+
+}
+
+
+
+function addEditionMetadataItem(
+    label,
+    value,
+    url = null
+) {
+
+    if (
+        value === null ||
+        value === undefined ||
+        value === ""
+    ) {
+        return;
+    }
+
+
+    const item =
+        document.createElement(
+            "div"
+        );
+
+    item.className =
+        "edition-metadata-item";
+
+
+    const term =
+        document.createElement(
+            "dt"
+        );
+
+    term.textContent =
+        label;
+
+
+    const description =
+        document.createElement(
+            "dd"
+        );
+
+
+    if (url) {
+
+        const link =
+            document.createElement(
+                "a"
+            );
+
+        link.href = url;
+        link.target = "_blank";
+        link.rel = "noopener noreferrer";
+        link.textContent = String(value);
+
+        description.appendChild(link);
+
+    }
+    else {
+
+        description.textContent =
+            String(value);
+
+    }
+
+
+    item.appendChild(term);
+    item.appendChild(description);
+    editionMetadata.appendChild(item);
 
 }
 
