@@ -50,7 +50,6 @@ const document = {
     }
 };
 
-
 const detailsContext = {
     URLSearchParams,
     console: { error() {}, warn() {} },
