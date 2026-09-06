@@ -47,7 +47,6 @@ const external = {
     automaticCoverId: 456
 };
 
-
 assert.deepEqual(
     Array.from(context.getWorkCoverCandidates(external)),
     [789]
