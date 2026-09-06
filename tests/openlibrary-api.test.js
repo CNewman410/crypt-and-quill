@@ -98,3 +98,60 @@ assert.ok(
 
 
 console.log("Open Library representative-edition format tests passed.");
+
+
+const normalDescription =
+    "A family's winter isolation awakens an old evil.\n\nThe hotel remembers.";
+
+assert.equal(
+    context.cleanOpenLibraryDescription(normalDescription),
+    normalDescription
+);
+
+
+const shiningDescription = `Jack Torrance takes a winter job at the Overlook Hotel.
+
+---
+
+Also contained in:
+
+- [Carrie / Night Shift / 'Salem's Lot / Shining](https://openlibrary.org/works/OL1W)
+- [Works (Danse Macabre / Salem's Lot / Shining)](https://openlibrary.org/works/OL2W)`;
+
+assert.equal(
+    context.cleanOpenLibraryDescription(shiningDescription),
+    "Jack Torrance takes a winter job at the Overlook Hotel."
+);
+
+
+assert.equal(
+    context.cleanOpenLibraryDescription(
+        "King's novel [The Shining](https://openlibrary.org/works/OL45804W) " +
+        "depicts the Overlook Hotel."
+    ),
+    "King's novel The Shining depicts the Overlook Hotel."
+);
+
+
+assert.equal(
+    context.cleanOpenLibraryDescription(
+        "The hotel has a terrible history.\n\nhttps://openlibrary.org/works/OL45804W"
+    ),
+    "The hotel has a terrible history."
+);
+
+
+assert.equal(
+    context.cleanOpenLibraryDescription(
+        "'Salem's Lot is threatened, and King's characters must face it."
+    ),
+    "'Salem's Lot is threatened, and King's characters must face it."
+);
+
+
+assert.equal(context.extractOpenLibraryText(undefined), "");
+assert.equal(context.extractOpenLibraryText({ value: "   " }), "");
+assert.equal(context.cleanOpenLibraryDescription(null), "");
+
+
+console.log("Open Library description-cleanup tests passed.");
