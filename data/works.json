@@ -17,6 +17,7 @@
         "searchAliases": [
             "Library of Babel"
         ],
+        "description": "The universe is imagined as an immense library containing every possible book of a fixed format. Its inhabitants search the galleries for meaning, truth, and vindication amid an overwhelming abundance of meaningless text. The story uses this impossible archive to explore infinity, knowledge, and human attempts to impose order on the unknowable.",
         "relationships": {}
     },
     {
@@ -39,6 +40,7 @@
         "searchAliases": [
             "King in Yellow"
         ],
+        "description": "This collection links several tales through a forbidden play called The King in Yellow, whose readers encounter disturbing ideas and altered perceptions. Its early stories blend decadent fiction, supernatural horror, and glimpses of the strange city of Carcosa. Later pieces shift toward romantic and bohemian subjects while retaining the collection's fin-de-siècle atmosphere.",
         "relationships": {}
     },
     {
@@ -59,6 +61,7 @@
             "Identity"
         ],
         "searchAliases": [],
+        "description": "On the eve of interstellar war, seven pilgrims travel to the distant world Hyperion and the mysterious Time Tombs. Each recounts the events that brought them into the orbit of the Shrike, a lethal being associated with the tombs. Their linked narratives combine space opera with religious, philosophical, and horrific speculation.",
         "relationships": {}
     },
     {
@@ -83,6 +86,7 @@
             "Antimemetics Division",
             "There is no Antimemetics Division"
         ],
+        "description": "A secret organization confronts anomalous ideas and entities that erase evidence of themselves from human memory. Its personnel must investigate threats they cannot reliably perceive, record, or remember. The novel combines speculative problem-solving with cosmic horror centered on memory, identity, and unseen danger.",
         "relationships": {}
     },
     {
@@ -107,6 +111,7 @@
         "searchAliases": [
             "Jaunt"
         ],
+        "description": "In a future where teleportation has transformed travel, a father explains the technology's history to his family before a journey to Mars. The process is safe only when passengers are unconscious, and its underlying relationship to time remains deeply unsettling. The story turns a technological premise into an account of isolation and existential horror.",
         "relationships": {
             "appearsIn": [
                 {
@@ -132,6 +137,7 @@
             "Mortality"
         ],
         "searchAliases": [],
+        "description": "A teenage runaway known as the kid joins a band of scalp hunters moving through the borderlands of Mexico and the American Southwest in the mid-nineteenth century. Their campaign unfolds amid relentless violence under the influence of the learned and imposing Judge Holden. The novel presents a stark historical vision of warfare, power, and mortality.",
         "relationships": {}
     },
     {
@@ -154,6 +160,7 @@
         "searchAliases": [
             "House on the Borderland"
         ],
+        "description": "Two travelers discover a manuscript in the ruins of an isolated house in rural Ireland. Its narrator describes assaults by strange creatures and visions that carry him far beyond ordinary space and time. The novel moves from supernatural siege to cosmic speculation about reality and the fate of the universe.",
         "relationships": {}
     },
     {
@@ -176,6 +183,7 @@
         "searchAliases": [
             "Foucaults Pendulum"
         ],
+        "description": "Three editors at a Milan publishing house amuse themselves by constructing an elaborate conspiracy from occult manuscripts and historical secret societies. As their invented Plan gathers coherence, other people begin to treat it as real. The novel examines interpretation, esoteric knowledge, and the dangers of turning coincidence into certainty.",
         "relationships": {}
     },
     {
@@ -195,6 +203,7 @@
         "searchAliases": [
             "Divine Farce"
         ],
+        "description": "Three men awaken confined in an immense, crowded chamber with no clear account of how they arrived. Their attempts to understand and escape the space lead through an afterlife governed by unfamiliar physical and moral conditions. The novella uses its enclosed setting to explore consciousness, suffering, and human adaptation.",
         "relationships": {}
     },
     {
@@ -217,6 +226,7 @@
         "searchAliases": [
             "Short Stay in Hell"
         ],
+        "description": "After death, a man is assigned to a vast library and told he may leave once he finds the book containing the exact story of his life. The apparently simple task becomes almost incomprehensible within the library's scale. The novella combines an afterlife narrative with existential horror about infinity, time, and hope.",
         "relationships": {}
     },
     {
@@ -240,6 +250,7 @@
             "Redemption"
         ],
         "searchAliases": [],
+        "description": "During the Black Death, a disgraced knight escorts a young girl across a devastated fourteenth-century France. Their journey passes through plague, human brutality, and manifestations of a larger conflict between celestial and infernal powers. The novel blends historical fiction, dark fantasy, and religious horror.",
         "relationships": {}
     },
     {
@@ -262,6 +273,7 @@
             "Identity"
         ],
         "searchAliases": [],
+        "description": "A young man becomes consumed by a dead man's scholarly manuscript about a documentary film that may not exist. The film concerns a family's house whose interior dimensions exceed its exterior and whose passages continue to change. Layered narrators, documents, and typography create a disorienting exploration of impossible space, obsession, and unreliable evidence.",
         "relationships": {}
     },
     {
@@ -286,6 +298,7 @@
         "searchAliases": [
             "Fisherman"
         ],
+        "description": "Two widowers seek solace in fishing and hear of a remote creek in upstate New York with a troubled history. Their visit draws them toward an old account of loss, forbidden practices, and a presence connected to the water. The novel combines grief and regional folklore with cosmic horror.",
         "relationships": {}
     },
     {
@@ -336,6 +349,7 @@
             "Haunting of Hill House",
             "Hill House"
         ],
+        "description": "Four people gather at Hill House as part of an investigation into the mansion's reputation for supernatural activity. Eleanor Vance, lonely and sensitive to the house's atmosphere, becomes increasingly entangled with the place. The novel sustains ambiguity between haunting and psychological disturbance while examining isolation and belonging.",
         "relationships": {}
     },
     {
@@ -360,6 +374,7 @@
         "searchAliases": [
             "We Have Always Lived in Castle"
         ],
+        "description": "Merricat Blackwood lives in isolation with her sister Constance and their uncle after a fatal poisoning left most of the family dead. The surviving Blackwoods are shunned by the nearby village and follow a secluded domestic routine. The arrival of a cousin threatens their closed world and exposes its tensions.",
         "relationships": {}
     },
     {
@@ -382,6 +397,7 @@
             "Forbidden Knowledge"
         ],
         "searchAliases": [],
+        "description": "Solicitor Jonathan Harker travels to Transylvania to assist Count Dracula with an English property purchase and discovers his host's predatory nature. After Dracula reaches England, a group of friends works to understand and oppose the threat he poses. Told through journals, letters, and other records, the novel combines Gothic suspense with vampire horror.",
         "relationships": {}
     },
     {
@@ -407,6 +423,7 @@
         "searchAliases": [
             "Shining"
         ],
+        "description": "Jack Torrance takes a winter caretaker position at the isolated Overlook Hotel, accompanied by his wife Wendy and their young son Danny. Danny's psychic ability makes him unusually aware of the hotel's violent history and supernatural presences. As snow cuts the family off from help, the hotel intensifies existing strains and dangers.",
         "relationships": {}
     },
     {
@@ -457,6 +474,7 @@
         "searchAliases": [
             "I Am Legend Richard Matheson"
         ],
+        "description": "Robert Neville appears to be the last uninfected human in a world transformed by a pandemic whose victims exhibit vampiric traits. By day he studies the disease and searches abandoned Los Angeles; by night he barricades himself against the infected. The novel combines scientific investigation, survival horror, and the isolation of life after societal collapse.",
         "relationships": {}
     },
     {
@@ -481,6 +499,7 @@
         "searchAliases": [
             "Library at Mount Char"
         ],
+        "description": "Carolyn and eleven other adopted children were raised by a powerful man they call Father, each trained to master a different catalog of forbidden knowledge. When Father disappears and access to his vast library is blocked, Carolyn begins a carefully planned search for him. The novel combines dark fantasy and horror with contests over knowledge, identity, and reality-altering power.",
         "relationships": {}
     },
     {
@@ -506,6 +525,7 @@
         "searchAliases": [
             "Terror Dan Simmons"
         ],
+        "description": "The crews of HMS Erebus and HMS Terror become trapped in Arctic ice during the Franklin expedition's search for the Northwest Passage. Disease, hunger, cold, and failing leadership threaten the stranded sailors while an unknown predator stalks them. The novel blends the historical expedition with supernatural survival horror.",
         "relationships": {}
     },
     {
@@ -529,6 +549,7 @@
         "searchAliases": [
             "Ghost Story Straub"
         ],
+        "description": "Four elderly men in a small New York town meet to tell stories as the Chowder Society. After one member dies, shared memories and a secret from their youth begin to connect with disturbing events around them. The novel combines a haunting narrative with shape-shifting supernatural menace and long-buried guilt.",
         "relationships": {}
     },
     {
@@ -552,6 +573,7 @@
         "searchAliases": [
             "Troop Nick Cutter"
         ],
+        "description": "A Scout troop and its leader travel to an isolated Canadian island for a camping trip. Their seclusion is disrupted by the arrival of a dangerously ill stranger carrying an experimental parasite. The novel follows the resulting struggle for survival through body horror, contagion, and group conflict.",
         "relationships": {}
     },
     {
@@ -577,6 +599,7 @@
         "searchAliases": [
             "Reformatory"
         ],
+        "description": "In 1950 Jim Crow Florida, twelve-year-old Robbie Stephens Jr. is sentenced to the Gracetown School for Boys after defending his sister. The institution is governed by racial violence and abuse, while Robbie can also perceive the ghosts of boys who died there. His sister Gloria works from outside to free him as he confronts both human and supernatural threats.",
         "relationships": {}
     },
     {
@@ -602,6 +625,7 @@
         "searchAliases": [
             "Slewfoot A Tale of Bewitchery"
         ],
+        "description": "In a Puritan settlement in 1666 New England, the widowed Abitha struggles to retain her farm and independence. In the surrounding forest she encounters an ancient being whose nature is contested by the people and spirits around it. The novel blends historical witch horror, folklore, and conflict over religious and social power.",
         "relationships": {}
     },
     {
@@ -626,6 +650,7 @@
             "HEX",
             "Hex Thomas Olde Heuvelt"
         ],
+        "description": "The residents of Black Spring live under a curse embodied by a seventeenth-century witch who wanders the town with her eyes and mouth sewn shut. A surveillance system and strict local rules keep her existence secret from outsiders. When a group of teenagers challenges those controls, the community's fear and coercion begin to escalate.",
         "relationships": {}
     },
     {
@@ -650,6 +675,7 @@
         "searchAliases": [
             "Croning"
         ],
+        "description": "Donald Miller's long marriage and fragmented memories conceal connections to an ancient presence and his wife's unusual family history. As missing pieces of his past return, domestic life opens onto a wider world of ritual and cosmic threat. The novel combines marital unease, folklore, and horror about aging and inherited secrets.",
         "relationships": {}
     },
     {
@@ -674,6 +700,7 @@
         "searchAliases": [
             "Secret of Ventriloquism"
         ],
+        "description": "This linked collection explores ventriloquists, uncanny performances, and spaces in which identity and reality become unstable. Recurring figures and settings connect stories, scripts, and other forms into a larger pattern. The collection emphasizes psychological and cosmic unease through voices that appear detached from their sources.",
         "relationships": {}
     },
     {
@@ -699,6 +726,7 @@
             "Monkeys Paw",
             "Monkey's Paw"
         ],
+        "description": "The White family receives a mummified monkey's paw said to grant three wishes to each owner. Although warned that it brings sorrow by interfering with fate, Mr. White makes a modest wish. The short story develops its supernatural premise through grief, consequence, and mounting dread.",
         "relationships": {}
     }
 ]
