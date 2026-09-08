@@ -502,7 +502,47 @@ function cleanOpenLibraryDescription(value) {
         .replace(/\n[ \t]*\n(?:[ \t]*\n)+/g, "\n\n")
         .trim();
 
-    return description;
+    return isUsefulOpenLibraryDescription(description)
+        ? description
+        : "";
+}
+
+
+/**
+ * Exclude non-descriptions without imposing a substantial length requirement.
+ * Some legitimate summaries of short works are themselves quite brief.
+ */
+function isUsefulOpenLibraryDescription(description) {
+    if (typeof description !== "string") {
+        return false;
+    }
+
+    const trimmedDescription = description.trim();
+
+    if (!trimmedDescription) {
+        return false;
+    }
+
+    const normalizedDescription = trimmedDescription
+        .toLowerCase()
+        .replace(/[.:;!?]+$/g, "")
+        .trim();
+
+    const placeholders = new Set([
+        "see work",
+        "see also",
+        "n/a",
+        "no description",
+        "description unavailable"
+    ]);
+
+    if (placeholders.has(normalizedDescription)) {
+        return false;
+    }
+
+    const proseWords = trimmedDescription.match(/[A-Za-z]+(?:['’-][A-Za-z]+)*/g) || [];
+
+    return trimmedDescription.length >= 10 && proseWords.length >= 2;
 }
 
 
