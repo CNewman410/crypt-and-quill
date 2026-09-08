@@ -165,7 +165,6 @@ assert.equal(context.cleanOpenLibraryDescription(null), "");
     assert.equal(context.cleanOpenLibraryDescription(placeholder), "");
 });
 
-
 assert.equal(context.cleanOpenLibraryDescription("Unknown"), "");
 
 
@@ -173,7 +172,6 @@ assert.equal(
     context.cleanOpenLibraryDescription("A ghost returns."),
     "A ghost returns."
 );
-
 
 assert.equal(
     context.extractOpenLibraryText({
