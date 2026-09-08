@@ -154,4 +154,33 @@ assert.equal(context.extractOpenLibraryText({ value: "   " }), "");
 assert.equal(context.cleanOpenLibraryDescription(null), "");
 
 
+[
+    "See work:",
+    "See work",
+    "See also:",
+    "N/A",
+    "No description",
+    "Description unavailable"
+].forEach((placeholder) => {
+    assert.equal(context.cleanOpenLibraryDescription(placeholder), "");
+});
+
+
+assert.equal(context.cleanOpenLibraryDescription("Unknown"), "");
+
+
+assert.equal(
+    context.cleanOpenLibraryDescription("A ghost returns."),
+    "A ghost returns."
+);
+
+
+assert.equal(
+    context.extractOpenLibraryText({
+        value: "A traveler enters a remote house and encounters an unexplained presence."
+    }),
+    "A traveler enters a remote house and encounters an unexplained presence."
+);
+
+
 console.log("Open Library description-cleanup tests passed.");
