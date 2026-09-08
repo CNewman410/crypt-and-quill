@@ -1,0 +1,63 @@
+/* ========================================
+   WORK DETAILS INDEPENDENT ARCHIVE RAIL
+   ======================================== */
+
+.work-details-archive-rail,
+.work-details-main-column {
+    min-width: 0;
+}
+
+
+@media (min-width: 651px) {
+
+    .work-details-inner {
+        grid-template-areas: none;
+        grid-template-rows: auto;
+        align-items: start;
+    }
+
+
+    .work-details-archive-rail {
+        grid-column: 1;
+        grid-row: 1;
+    }
+
+
+    .work-details-main-column {
+        grid-column: 2;
+        grid-row: 1;
+    }
+
+
+    .work-details-archive-rail .classification-section {
+        margin-top: 42px;
+    }
+
+
+    .work-details-archive-rail .edition-section {
+        margin-top: 48px;
+    }
+
+
+    .work-details-main-column .description-section,
+    .work-details-main-column .personal-library-section {
+        margin-top: 52px;
+    }
+
+
+    .work-details-main-column .rating-section,
+    .work-details-main-column .review-section {
+        margin-top: 58px;
+    }
+
+}
+
+
+@media (max-width: 650px) {
+
+    .work-details-archive-rail,
+    .work-details-main-column {
+        display: contents;
+    }
+
+}
