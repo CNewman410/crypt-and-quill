@@ -105,6 +105,15 @@ assert.equal(fallbackModel.description, "Cleaned Open Library fallback.");
 
 
 const works = JSON.parse(fs.readFileSync("data/works.json", "utf8"));
+assert.equal(works.length, 30);
+assert.ok(works.every((work) => {
+    return typeof work.description === "string" && work.description.trim();
+}));
+
+const iAmLegend = works.find((work) => work.id === "cq-i-am-legend");
+assert.ok(iAmLegend.description.trim());
+assert.match(iAmLegend.description, /Robert Neville/);
+
 const willows = modelContext.normalizeCuratedWork(
     works.find((work) => work.id === "cq-the-willows")
 );
