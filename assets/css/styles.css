@@ -2787,6 +2787,7 @@ img {
 }
 
 
+.reading-date-field,
 .reading-date-fields label {
 
     display: grid;
@@ -2804,6 +2805,45 @@ img {
     letter-spacing: 0.05em;
 
     text-transform: uppercase;
+}
+
+
+.reading-date-actions {
+    display: flex;
+    gap: 6px;
+}
+
+
+.reading-date-actions button {
+    padding: 4px 8px;
+    color: var(--text-muted);
+    font: 700 0.65rem Arial, Helvetica, sans-serif;
+    letter-spacing: 0.04em;
+    background: transparent;
+    border: 1px solid var(--border);
+    cursor: pointer;
+}
+
+
+.reading-date-actions button:hover,
+.reading-date-actions button:focus-visible {
+    color: var(--gold);
+    border-color: var(--gold-soft);
+}
+
+
+.reading-dates-save.button {
+    color: var(--parchment);
+    background: #351b20;
+    border-color: var(--gold-soft);
+}
+
+
+.reading-dates-save.button:hover,
+.reading-dates-save.button:focus-visible {
+    color: var(--gold);
+    background: #4a222a;
+    border-color: var(--gold);
 }
 
 

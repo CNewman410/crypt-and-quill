@@ -27,6 +27,13 @@ const READING_DATE_FIELDS = [
 ];
 
 
+const READING_SESSION_STATUSES = [
+    "currently-reading",
+    "read",
+    "dnf"
+];
+
+
 const RATING_CATEGORIES = {
 
     storyPlot: {
@@ -96,6 +103,40 @@ function getPersonalLibrary() {
             !Array.isArray(parsed)
         ) {
 
+            /*
+             * Reading dates originally lived only at the top level. Keep
+             * those fields as a compatibility mirror while adding one
+             * deterministic legacy session. This migration runs on every
+             * read, but only writes when a record actually changes, so old
+             * bookmarks and existing v1 localStorage data remain safe.
+             */
+            let didMigrate = false;
+
+
+            Object.entries(parsed).forEach(
+                ([workId, work]) => {
+
+                    const migratedWork =
+                        migrateReadingHistory(
+                            workId,
+                            work
+                        );
+
+
+                    if (migratedWork !== work) {
+                        parsed[workId] = migratedWork;
+                        didMigrate = true;
+                    }
+
+                }
+            );
+
+
+            if (didMigrate) {
+                savePersonalLibrary(parsed);
+            }
+
+
             return parsed;
 
         }
@@ -112,6 +153,67 @@ function getPersonalLibrary() {
 
 
     return {};
+
+}
+
+
+function migrateReadingHistory(
+    workId,
+    work
+) {
+
+    if (
+        !work ||
+        typeof work !== "object" ||
+        Array.isArray(work) ||
+        Array.isArray(work.readingHistory)
+    ) {
+        return work;
+    }
+
+
+    const hasLegacyDate =
+        READING_DATE_FIELDS.some(
+            (field) => isValidReadingDate(work[field])
+        );
+
+
+    return {
+        ...work,
+        readingHistory: hasLegacyDate
+            ? [{
+                id: createLegacyReadingSessionId(workId),
+                status: getReadingSessionStatus(work),
+                dateStarted: getValidReadingDate(work.dateStarted),
+                dateFinished: getValidReadingDate(work.dateFinished),
+                dateAbandoned: getValidReadingDate(work.dateAbandoned)
+            }]
+            : []
+    };
+
+}
+
+
+function createLegacyReadingSessionId(
+    workId
+) {
+
+    let hash = 0;
+
+
+    Array.from(String(workId)).forEach(
+        (character) => {
+
+            hash = (
+                (hash * 31) +
+                character.charCodeAt(0)
+            ) >>> 0;
+
+        }
+    );
+
+
+    return `legacy-${hash.toString(36)}`;
 
 }
 
@@ -317,6 +419,14 @@ function hasSavedPersonalData(
 
 
     if (
+        Array.isArray(work.readingHistory) &&
+        work.readingHistory.some(isMeaningfulReadingSession)
+    ) {
+        return true;
+    }
+
+
+    if (
         READING_DATE_FIELDS.some(
             (field) => isValidReadingDate(
                 work[field]
@@ -495,12 +605,35 @@ function setReadingStatus(
             : newStatus;
 
 
+    const changes = {
+        status:
+            status
+    };
+
+
+    const hasCurrentSession =
+        Array.isArray(savedWork?.readingHistory) &&
+        savedWork.readingHistory.length > 0;
+
+
+    if (
+        READING_SESSION_STATUSES.includes(status) ||
+        hasCurrentSession
+    ) {
+        Object.assign(
+            changes,
+            buildCurrentReadingSessionChanges(
+                workId,
+                savedWork,
+                status
+            )
+        );
+    }
+
+
     saveLibraryWork(
         workId,
-        {
-            status:
-                status
-        }
+        changes
     );
 
 
@@ -566,6 +699,213 @@ function isValidReadingDate(
 }
 
 
+function getReadingDatePrecision(
+    value
+) {
+
+    if (!isValidReadingDate(value)) {
+        return null;
+    }
+
+
+    return [
+        "year",
+        "month",
+        "day"
+    ][value.split("-").length - 1];
+
+}
+
+
+function getLocalReadingDate(
+    date = new Date()
+) {
+
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+
+
+    return `${year}-${month}-${day}`;
+
+}
+
+
+function getValidReadingDate(
+    value
+) {
+
+    return isValidReadingDate(value)
+        ? value
+        : null;
+
+}
+
+
+function getReadingSessionStatus(
+    work
+) {
+
+    if (
+        READING_SESSION_STATUSES.includes(work?.status)
+    ) {
+        return work.status;
+    }
+
+
+    if (isValidReadingDate(work?.dateAbandoned)) {
+        return "dnf";
+    }
+
+
+    if (isValidReadingDate(work?.dateFinished)) {
+        return "read";
+    }
+
+
+    return "currently-reading";
+
+}
+
+
+function isMeaningfulReadingSession(
+    session
+) {
+
+    return Boolean(
+        session &&
+        typeof session === "object" &&
+        READING_SESSION_STATUSES.includes(session.status)
+    );
+
+}
+
+
+function storageGetReadingHistory(
+    workId
+) {
+
+    const savedWork = getSavedLibraryWork(workId);
+
+
+    return Array.isArray(savedWork?.readingHistory)
+        ? savedWork.readingHistory.map((session) => ({ ...session }))
+        : [];
+
+}
+
+
+function storageGetReadingSessions(
+    workId
+) {
+
+    return storageGetReadingHistory(workId);
+
+}
+
+
+function storageGetCompletedReadingSessions() {
+
+    return getSavedLibraryWorks().flatMap(
+        (work) => (
+            Array.isArray(work.readingHistory)
+                ? work.readingHistory
+                : []
+        )
+            .filter((session) => session.status === "read")
+            .map((session) => ({
+                ...session,
+                workId: work.id
+            }))
+    );
+
+}
+
+
+function createReadingSessionId(
+    workId
+) {
+
+    return (
+        `session-${Date.now().toString(36)}-` +
+        `${createLegacyReadingSessionId(workId).slice(7)}`
+    );
+
+}
+
+
+function buildCurrentReadingSessionChanges(
+    workId,
+    savedWork,
+    status,
+    dates = null
+) {
+
+    const history = Array.isArray(savedWork?.readingHistory)
+        ? savedWork.readingHistory.map((session) => ({ ...session }))
+        : [];
+
+    const suppliedDates = dates || Object.fromEntries(
+        READING_DATE_FIELDS.map(
+            (field) => [field, getValidReadingDate(savedWork?.[field])]
+        )
+    );
+
+    const hasSuppliedDate = READING_DATE_FIELDS.some(
+        (field) => Boolean(suppliedDates[field])
+    );
+
+    const sessionIsRequired =
+        READING_SESSION_STATUSES.includes(status);
+
+    let session = history[history.length - 1];
+
+
+    if (
+        !session &&
+        (hasSuppliedDate || sessionIsRequired)
+    ) {
+        session = {
+            id: createReadingSessionId(workId)
+        };
+        history.push(session);
+    }
+
+
+    if (
+        session &&
+        !hasSuppliedDate &&
+        !sessionIsRequired
+    ) {
+        history.pop();
+        session = null;
+    }
+
+
+    if (session) {
+
+        session.status = sessionIsRequired
+            ? status
+            : getReadingSessionStatus(suppliedDates);
+
+
+        READING_DATE_FIELDS.forEach(
+            (field) => {
+                session[field] = suppliedDates[field] || null;
+            }
+        );
+
+    }
+
+
+    return {
+        readingHistory: history,
+        ...suppliedDates
+    };
+
+}
+
+
 function saveReadingDates(
     workId
 ) {
@@ -596,10 +936,28 @@ function saveReadingDates(
     );
 
 
-    saveLibraryWork(
-        workId,
-        changes
+    const savedWork = getSavedLibraryWork(workId);
+    const hasDate = READING_DATE_FIELDS.some(
+        (field) => Boolean(changes[field])
     );
+    const hasSession = Array.isArray(savedWork?.readingHistory) &&
+        savedWork.readingHistory.length > 0;
+
+
+    if (hasDate || hasSession) {
+        Object.assign(
+            changes,
+            buildCurrentReadingSessionChanges(
+                workId,
+                savedWork,
+                savedWork?.status,
+                changes
+            )
+        );
+    }
+
+
+    saveLibraryWork(workId, changes);
 
 
     updateReadingDateControls();
@@ -908,7 +1266,44 @@ function initializeReadingDateControls() {
     );
 
 
+    form.querySelectorAll("[data-reading-date-action]").forEach(
+        (button) => {
+
+            button.addEventListener(
+                "click",
+                () => applyReadingDateAction(button)
+            );
+
+        }
+    );
+
+
     updateReadingDateControls();
+
+}
+
+
+function applyReadingDateAction(
+    button
+) {
+
+    const field = button.dataset.readingDateTarget;
+    const input = document.querySelector(
+        `[data-reading-date="${field}"]`
+    );
+
+
+    if (!input) {
+        return;
+    }
+
+
+    input.value = button.dataset.readingDateAction === "today"
+        ? getLocalReadingDate()
+        : "";
+
+
+    input.focus();
 
 }
 
@@ -941,12 +1336,15 @@ function updateReadingDateControls() {
 
             if (input) {
 
-                input.value =
-                    isValidReadingDate(
-                        savedWork?.[field]
-                    )
-                        ? savedWork[field]
-                        : "";
+                const currentSession =
+                    savedWork?.readingHistory?.[
+                        savedWork.readingHistory.length - 1
+                    ];
+
+
+                input.value = getValidReadingDate(currentSession?.[field]) ||
+                    getValidReadingDate(savedWork?.[field]) ||
+                    "";
 
             }
 
