@@ -409,40 +409,58 @@
                                 </legend>
 
                                 <p class="reading-dates-help">
-                                    Add any dates you remember. Use YYYY, YYYY-MM, or YYYY-MM-DD; all fields are optional.
+                                    Optional. Use YYYY, YYYY-MM, or YYYY-MM-DD.
                                 </p>
 
                                 <div class="reading-date-fields">
 
-                                    <label>
-                                        <span>Date Started</span>
-                                        <input
-                                            type="text"
-                                            placeholder="YYYY, YYYY-MM, or YYYY-MM-DD"
-                                            pattern="\d{4}(-\d{2}(-\d{2})?)?"
-                                            data-reading-date="dateStarted"
-                                        >
-                                    </label>
+                                    <div class="reading-date-field">
+                                        <label>
+                                            <span>Date Started</span>
+                                            <input
+                                                type="text"
+                                                placeholder="YYYY, YYYY-MM, or YYYY-MM-DD"
+                                                pattern="\d{4}(-\d{2}(-\d{2})?)?"
+                                                data-reading-date="dateStarted"
+                                            >
+                                        </label>
+                                        <div class="reading-date-actions">
+                                            <button type="button" aria-label="Set Date Started to today" data-reading-date-action="today" data-reading-date-target="dateStarted">Today</button>
+                                            <button type="button" aria-label="Clear Date Started" data-reading-date-action="clear" data-reading-date-target="dateStarted">Clear</button>
+                                        </div>
+                                    </div>
 
-                                    <label>
-                                        <span>Date Finished</span>
-                                        <input
-                                            type="text"
-                                            placeholder="YYYY, YYYY-MM, or YYYY-MM-DD"
-                                            pattern="\d{4}(-\d{2}(-\d{2})?)?"
-                                            data-reading-date="dateFinished"
-                                        >
-                                    </label>
+                                    <div class="reading-date-field">
+                                        <label>
+                                            <span>Date Finished</span>
+                                            <input
+                                                type="text"
+                                                placeholder="YYYY, YYYY-MM, or YYYY-MM-DD"
+                                                pattern="\d{4}(-\d{2}(-\d{2})?)?"
+                                                data-reading-date="dateFinished"
+                                            >
+                                        </label>
+                                        <div class="reading-date-actions">
+                                            <button type="button" aria-label="Set Date Finished to today" data-reading-date-action="today" data-reading-date-target="dateFinished">Today</button>
+                                            <button type="button" aria-label="Clear Date Finished" data-reading-date-action="clear" data-reading-date-target="dateFinished">Clear</button>
+                                        </div>
+                                    </div>
 
-                                    <label>
-                                        <span>DNF / Abandoned Date</span>
-                                        <input
-                                            type="text"
-                                            placeholder="YYYY, YYYY-MM, or YYYY-MM-DD"
-                                            pattern="\d{4}(-\d{2}(-\d{2})?)?"
-                                            data-reading-date="dateAbandoned"
-                                        >
-                                    </label>
+                                    <div class="reading-date-field">
+                                        <label>
+                                            <span>DNF / Abandoned Date</span>
+                                            <input
+                                                type="text"
+                                                placeholder="YYYY, YYYY-MM, or YYYY-MM-DD"
+                                                pattern="\d{4}(-\d{2}(-\d{2})?)?"
+                                                data-reading-date="dateAbandoned"
+                                            >
+                                        </label>
+                                        <div class="reading-date-actions">
+                                            <button type="button" aria-label="Set DNF date to today" data-reading-date-action="today" data-reading-date-target="dateAbandoned">Today</button>
+                                            <button type="button" aria-label="Clear DNF date" data-reading-date-action="clear" data-reading-date-target="dateAbandoned">Clear</button>
+                                        </div>
+                                    </div>
 
                                 </div>
 
@@ -459,7 +477,7 @@
                                 </p>
 
                                 <button
-                                    class="button button-secondary"
+                                    class="button button-secondary reading-dates-save"
                                     type="submit"
                                 >
                                     Save Reading Dates
