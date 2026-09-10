@@ -174,6 +174,136 @@ saved = migrated.context.getSavedLibraryWork("cq-test");
 assert.equal(saved.readingHistory[0].status, "dnf");
 assert.equal(saved.readingHistory[0].dateStarted, "2026-09-03");
 
+
+function changeStatusAndGetWork(initialWork, status) {
+    const storage = createStorageContext({ "cq-test": initialWork });
+    storage.context.setReadingStatus("cq-test", status);
+    return storage.context.getSavedLibraryWork("cq-test");
+}
+
+
+const contradictorySession = {
+    id: "latest-session",
+    status: "read",
+    dateStarted: "2025-01",
+    dateFinished: "2025-02",
+    dateAbandoned: "2025-03"
+};
+const contradictoryWork = {
+    id: "cq-test",
+    status: "read",
+    dateStarted: "2025-01",
+    dateFinished: "2025-02",
+    dateAbandoned: "2025-03",
+    readingHistory: [contradictorySession]
+};
+
+const currentWork = changeStatusAndGetWork(
+    contradictoryWork,
+    "currently-reading"
+);
+assert.equal(currentWork.dateStarted, "2025-01");
+assert.equal(currentWork.dateFinished, null);
+assert.equal(currentWork.dateAbandoned, null);
+assert.equal(currentWork.readingHistory[0].id, "latest-session");
+
+const readWork = changeStatusAndGetWork(
+    { ...contradictoryWork, status: "currently-reading" },
+    "read"
+);
+assert.equal(readWork.dateStarted, "2025-01");
+assert.equal(readWork.dateFinished, "2025-02");
+assert.equal(readWork.dateAbandoned, null);
+
+const dnfWork = changeStatusAndGetWork(
+    { ...contradictoryWork, status: "currently-reading" },
+    "dnf"
+);
+assert.equal(dnfWork.dateStarted, "2025-01");
+assert.equal(dnfWork.dateFinished, null);
+assert.equal(dnfWork.dateAbandoned, "2025-03");
+
+[
+    ["read", "session-start-read"],
+    ["dnf", "session-start-dnf"]
+].forEach(([status, sessionId]) => {
+    const switched = changeStatusAndGetWork({
+        id: "cq-test",
+        status: "currently-reading",
+        readingHistory: [{
+            id: sessionId,
+            status: "currently-reading",
+            dateStarted: "2024-08",
+            dateFinished: null,
+            dateAbandoned: null
+        }]
+    }, status);
+    assert.equal(switched.readingHistory[0].id, sessionId);
+    assert.equal(switched.readingHistory[0].dateStarted, "2024-08");
+    assert.equal(switched.dateStarted, "2024-08");
+});
+
+[currentWork, readWork, dnfWork].forEach((work) => {
+    const latest = work.readingHistory[work.readingHistory.length - 1];
+    assert.equal(Boolean(latest.dateFinished && latest.dateAbandoned), false);
+});
+
+const historicalSession = {
+    id: "historical-session",
+    status: "read",
+    dateStarted: "2020",
+    dateFinished: "2021",
+    dateAbandoned: "legacy-value"
+};
+const historyWork = changeStatusAndGetWork({
+    ...contradictoryWork,
+    status: "currently-reading",
+    readingHistory: [historicalSession, contradictorySession]
+}, "dnf");
+assert.deepEqual(
+    JSON.parse(JSON.stringify(historyWork.readingHistory[0])),
+    historicalSession
+);
+assert.equal(historyWork.readingHistory[1].id, "latest-session");
+assert.equal(historyWork.readingHistory[1].dateFinished, null);
+assert.equal(historyWork.readingHistory[1].dateAbandoned, "2025-03");
+
+const toggledOff = createStorageContext({
+    "cq-test": {
+        ...contradictoryWork,
+        status: "dnf",
+        dateFinished: null,
+        readingHistory: [{
+            ...contradictorySession,
+            status: "dnf",
+            dateFinished: null
+        }]
+    }
+});
+toggledOff.context.setReadingStatus("cq-test", "dnf");
+const toggledOffWork = toggledOff.context.getSavedLibraryWork("cq-test");
+assert.equal(toggledOffWork.status, null);
+assert.equal(toggledOffWork.readingHistory.length, 1);
+assert.equal(toggledOffWork.readingHistory[0].dateStarted, "2025-01");
+assert.equal(toggledOffWork.readingHistory[0].dateAbandoned, "2025-03");
+
+const manualDates = createStorageContext();
+manualDates.inputs.dateStarted = { value: "2026-01", focus() {} };
+manualDates.inputs.dateFinished = { value: "2026-02", focus() {} };
+manualDates.inputs.dateAbandoned = { value: "2026-03", focus() {} };
+manualDates.context.saveReadingDates("cq-test");
+const manuallySaved = manualDates.context.getSavedLibraryWork("cq-test");
+assert.equal(manuallySaved.readingHistory[0].status, "dnf");
+assert.equal(manuallySaved.dateFinished, null);
+assert.equal(manuallySaved.dateAbandoned, "2026-03");
+assert.equal(
+    Boolean(
+        manuallySaved.readingHistory[0].dateFinished &&
+        manuallySaved.readingHistory[0].dateAbandoned
+    ),
+    false
+);
+
 assert.equal(migrated.context.hasSavedPersonalData({
     readingHistory: [{
         id: "session-only",
