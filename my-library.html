@@ -134,6 +134,22 @@
 
             <div class="library-controls-inner">
 
+                <div
+                    class="library-view-switch"
+                    role="group"
+                    aria-label="Choose My Library view"
+                >
+                    <button class="library-view-button active" type="button" data-library-view="library" aria-pressed="true">
+                        Library
+                    </button>
+                    <button class="library-view-button" type="button" data-library-view="calendar" aria-pressed="false">
+                        Calendar
+                    </button>
+                </div>
+
+
+                <div class="library-card-controls" id="library-card-controls">
+
 
                 <!-- FILTERS -->
 
@@ -232,15 +248,55 @@
 
                 </div>
 
+                </div>
+
             </div>
 
+        </section>
+
+
+        <!-- READING CALENDAR -->
+
+        <section class="reading-calendar-section" id="reading-calendar-section" hidden>
+            <div class="reading-calendar-inner">
+                <div class="reading-calendar-header">
+                    <div>
+                        <p class="section-kicker">Reading history</p>
+                        <h2 id="reading-calendar-heading" aria-live="polite"></h2>
+                    </div>
+                    <div class="reading-calendar-navigation" aria-label="Calendar month navigation">
+                        <button type="button" data-calendar-action="previous" aria-label="Previous month">Previous</button>
+                        <button type="button" data-calendar-action="today">Today</button>
+                        <button type="button" data-calendar-action="next" aria-label="Next month">Next</button>
+                    </div>
+                </div>
+
+                <div class="reading-calendar-empty library-empty-state" id="reading-calendar-empty" hidden>
+                    <p class="library-empty-symbol">◈</p>
+                    <h3>No reading dates recorded yet.</h3>
+                    <p>Add dates from a work's details page to build your reading calendar.</p>
+                </div>
+
+                <div id="reading-calendar-content">
+                    <div class="reading-calendar-scroll" tabindex="0" aria-label="Monthly reading calendar">
+                        <div class="reading-calendar-grid" id="reading-calendar-grid"></div>
+                    </div>
+                    <section class="reading-calendar-approximate" id="reading-calendar-approximate" hidden>
+                        <h3>Approximate dates this month</h3>
+                        <ul id="reading-calendar-approximate-list"></ul>
+                    </section>
+                    <p class="reading-calendar-year-note" id="reading-calendar-year-note" hidden>
+                        Some reading dates are recorded with year-only precision and are not shown on the monthly calendar.
+                    </p>
+                </div>
+            </div>
         </section>
 
 
 
         <!-- LIBRARY CONTENT -->
 
-        <section class="library-results-section">
+        <section class="library-results-section" id="library-results-section">
 
             <div class="library-results-inner">
 

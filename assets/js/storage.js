@@ -990,6 +990,50 @@ function storageGetCompletedReadingSessions() {
 }
 
 
+/*
+ * Flatten every dated reading-history session for archive views such as the
+ * Reading Calendar. Work metadata remains the saved local metadata; callers
+ * do not need to contact Open Library. Partial dates retain their precision.
+ */
+function storageGetReadingEvents() {
+
+    const eventFields = [
+        ["dateStarted", "started"],
+        ["dateFinished", "finished"],
+        ["dateAbandoned", "dnf"]
+    ];
+
+
+    return getSavedLibraryWorks().flatMap(
+        (work) => storageGetReadingSessions(work.id).flatMap(
+            (session, sessionIndex) => eventFields.flatMap(
+                ([field, eventType]) => {
+
+                    const date = getValidReadingDate(session[field]);
+
+
+                    if (!date) {
+                        return [];
+                    }
+
+
+                    return [{
+                        workId: work.id,
+                        title: work.title || "Untitled Work",
+                        sessionId: session.id || `session-${sessionIndex + 1}`,
+                        eventType,
+                        date,
+                        precision: getReadingDatePrecision(date)
+                    }];
+
+                }
+            )
+        )
+    );
+
+}
+
+
 function createReadingSessionId(
     workId
 ) {

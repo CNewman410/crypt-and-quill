@@ -50,6 +50,30 @@ const libraryFilterButtons =
     );
 
 
+const libraryViewButtons =
+    document.querySelectorAll(
+        "[data-library-view]"
+    );
+
+
+const libraryResultsSection =
+    document.getElementById(
+        "library-results-section"
+    );
+
+
+const readingCalendarSection =
+    document.getElementById(
+        "reading-calendar-section"
+    );
+
+
+const libraryCardControls =
+    document.getElementById(
+        "library-card-controls"
+    );
+
+
 
 /* ========================================
    PAGE STATE
@@ -59,6 +83,12 @@ let savedWorks = [];
 
 let activeLibraryFilter =
     "all";
+
+let activeLibraryView =
+    "library";
+
+let visibleCalendarMonth =
+    getLocalCalendarMonth();
 
 
 
@@ -82,8 +112,65 @@ function initializeMyLibrary() {
 
     addLibrarySortEvent();
 
+    addLibraryViewEvents();
+
+    addCalendarNavigationEvents();
+
 
     renderMyLibrary();
+
+}
+
+
+function addLibraryViewEvents() {
+
+    libraryViewButtons.forEach((button) => {
+        button.addEventListener("click", () => {
+            activeLibraryView = button.dataset.libraryView;
+            updateLibraryView();
+        });
+    });
+
+}
+
+
+function updateLibraryView() {
+
+    const showCalendar = activeLibraryView === "calendar";
+
+
+    libraryViewButtons.forEach((button) => {
+        const isActive = button.dataset.libraryView === activeLibraryView;
+        button.classList.toggle("active", isActive);
+        button.setAttribute("aria-pressed", String(isActive));
+    });
+
+
+    libraryResultsSection.hidden = showCalendar;
+    readingCalendarSection.hidden = !showCalendar;
+    libraryCardControls.hidden = showCalendar;
+
+
+    if (showCalendar) {
+        /* Calendar intentionally shows every history event, independent of
+         * the card-view shelf filter selected by the user. */
+        renderReadingCalendar();
+    }
+
+}
+
+
+function addCalendarNavigationEvents() {
+
+    document.querySelectorAll("[data-calendar-action]").forEach((button) => {
+        button.addEventListener("click", () => {
+            visibleCalendarMonth = getCalendarNavigationMonth(
+                visibleCalendarMonth,
+                button.dataset.calendarAction
+            );
+            renderReadingCalendar();
+        });
+    });
 
 }
 
@@ -952,6 +1039,235 @@ function getLibraryWorkURL(
             work.id
         )
     );
+
+}
+
+
+/* ========================================
+   READING CALENDAR
+   ======================================== */
+
+function getLocalCalendarMonth(
+    date = new Date()
+) {
+
+    return {
+        year: date.getFullYear(),
+        month: date.getMonth()
+    };
+
+}
+
+
+function getCalendarNavigationMonth(
+    currentMonth,
+    action,
+    today = new Date()
+) {
+
+    if (action === "today") {
+        return getLocalCalendarMonth(today);
+    }
+
+
+    const offset = action === "previous" ? -1 : 1;
+    const date = new Date(currentMonth.year, currentMonth.month + offset, 1);
+
+
+    return getLocalCalendarMonth(date);
+
+}
+
+
+function getCalendarEventsForMonth(
+    events,
+    year,
+    month
+) {
+
+    const monthKey = `${year}-${String(month + 1).padStart(2, "0")}`;
+
+
+    return {
+        exact: events.filter(
+            (event) => event.precision === "day" && event.date.startsWith(`${monthKey}-`)
+        ),
+        approximate: events.filter(
+            (event) => event.precision === "month" && event.date === monthKey
+        ),
+        hasYearOnly: events.some(
+            (event) => event.precision === "year" && event.date === String(year)
+        )
+    };
+
+}
+
+
+function getReadingEventWorkURL(
+    workId
+) {
+
+    return getLibraryWorkURL({ id: workId });
+
+}
+
+
+function createReadingEventLink(
+    event
+) {
+
+    const link = document.createElement("a");
+    link.className = `reading-calendar-event reading-calendar-event-${event.eventType}`;
+    link.href = getReadingEventWorkURL(event.workId);
+    link.textContent = `${getReadingEventLabel(event.eventType)} · ${event.title}`;
+    link.dataset.calendarEventId = `${event.sessionId}:${event.eventType}:${event.date}`;
+    return link;
+
+}
+
+
+function getReadingEventLabel(
+    eventType
+) {
+
+    return {
+        started: "Started",
+        finished: "Finished",
+        dnf: "Did Not Finish"
+    }[eventType] || "Reading";
+
+}
+
+
+function renderReadingCalendar() {
+
+    const events = storageGetReadingEvents();
+    const heading = document.getElementById("reading-calendar-heading");
+    const grid = document.getElementById("reading-calendar-grid");
+    const empty = document.getElementById("reading-calendar-empty");
+    const content = document.getElementById("reading-calendar-content");
+    const monthEvents = getCalendarEventsForMonth(
+        events,
+        visibleCalendarMonth.year,
+        visibleCalendarMonth.month
+    );
+
+
+    heading.textContent = new Intl.DateTimeFormat(undefined, {
+        month: "long",
+        year: "numeric"
+    }).format(new Date(visibleCalendarMonth.year, visibleCalendarMonth.month, 1));
+
+    empty.hidden = events.length !== 0;
+    content.hidden = events.length === 0;
+
+
+    if (events.length === 0) {
+        return;
+    }
+
+
+    renderCalendarGrid(grid, monthEvents.exact);
+    renderApproximateCalendarEvents(monthEvents.approximate);
+    document.getElementById("reading-calendar-year-note").hidden = !monthEvents.hasYearOnly;
+
+}
+
+
+function renderCalendarGrid(
+    grid,
+    exactEvents
+) {
+
+    grid.innerHTML = "";
+
+
+    ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
+        .forEach((weekday) => {
+            const label = document.createElement("div");
+            label.className = "reading-calendar-weekday";
+            label.textContent = weekday.slice(0, 3);
+            label.setAttribute("aria-label", weekday);
+            grid.appendChild(label);
+        });
+
+
+    const firstWeekday = new Date(
+        visibleCalendarMonth.year,
+        visibleCalendarMonth.month,
+        1
+    ).getDay();
+    const dayCount = new Date(
+        visibleCalendarMonth.year,
+        visibleCalendarMonth.month + 1,
+        0
+    ).getDate();
+
+
+    for (let blank = 0; blank < firstWeekday; blank += 1) {
+        const spacer = document.createElement("div");
+        spacer.className = "reading-calendar-day reading-calendar-day-outside";
+        spacer.setAttribute("aria-hidden", "true");
+        grid.appendChild(spacer);
+    }
+
+
+    for (let day = 1; day <= dayCount; day += 1) {
+        const cell = document.createElement("div");
+        const number = document.createElement("span");
+        const dateKey = `${visibleCalendarMonth.year}-${String(visibleCalendarMonth.month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+        const dayEvents = exactEvents.filter((event) => event.date === dateKey);
+
+        cell.className = "reading-calendar-day";
+        number.className = "reading-calendar-day-number";
+        number.textContent = String(day);
+        cell.appendChild(number);
+
+
+        dayEvents.forEach((event, index) => {
+            const link = createReadingEventLink(event);
+            if (index >= 3) {
+                link.hidden = true;
+            }
+            cell.appendChild(link);
+        });
+
+
+        if (dayEvents.length > 3) {
+            const overflow = document.createElement("button");
+            overflow.className = "reading-calendar-overflow";
+            overflow.type = "button";
+            overflow.textContent = `+${dayEvents.length - 3} more`;
+            overflow.addEventListener("click", () => {
+                cell.querySelectorAll(".reading-calendar-event[hidden]")
+                    .forEach((link) => { link.hidden = false; });
+                overflow.remove();
+            });
+            cell.appendChild(overflow);
+        }
+
+
+        grid.appendChild(cell);
+    }
+
+}
+
+
+function renderApproximateCalendarEvents(
+    events
+) {
+
+    const section = document.getElementById("reading-calendar-approximate");
+    const list = document.getElementById("reading-calendar-approximate-list");
+    section.hidden = events.length === 0;
+    list.innerHTML = "";
+
+
+    events.forEach((event) => {
+        const item = document.createElement("li");
+        item.appendChild(createReadingEventLink(event));
+        list.appendChild(item);
+    });
 
 }
 
