@@ -615,12 +615,6 @@ function setReadingStatus(
         status,
         currentDates
     );
-    const consistencyMessage = getReadingDateConsistencyMessage(
-        normalized.status,
-        normalized.clearedFields
-    );
-
-
     const hasCurrentSession =
         Array.isArray(savedWork?.readingHistory) &&
         savedWork.readingHistory.length > 0;
@@ -649,7 +643,15 @@ function setReadingStatus(
 
     updateLibraryButtons();
 
-    updateReadingDateControls();
+    const clearedInputFields = clearIncompatibleReadingDateInputs(status);
+    const clearedFields = Array.from(new Set([
+        ...normalized.clearedFields,
+        ...clearedInputFields
+    ]));
+    const consistencyMessage = getReadingDateConsistencyMessage(
+        status || normalized.status,
+        clearedFields
+    );
 
     if (consistencyMessage) {
         setReadingDatesMessage(consistencyMessage);
@@ -897,6 +899,39 @@ function getReadingDateConsistencyMessage(
 
 
     return "";
+
+}
+
+
+function clearIncompatibleReadingDateInputs(
+    status
+) {
+
+    const incompatibleFields = {
+        "currently-reading": ["dateFinished", "dateAbandoned"],
+        read: ["dateAbandoned"],
+        dnf: ["dateFinished"]
+    }[status] || [];
+
+
+    return incompatibleFields.filter(
+        (field) => {
+
+            const input = document.querySelector(
+                `[data-reading-date="${field}"]`
+            );
+
+
+            if (!input || !input.value) {
+                return false;
+            }
+
+
+            input.value = "";
+            return true;
+
+        }
+    );
 
 }
 

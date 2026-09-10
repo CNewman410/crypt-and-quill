@@ -248,6 +248,96 @@ assert.equal(dnfWork.dateAbandoned, "2025-03");
     assert.equal(Boolean(latest.dateFinished && latest.dateAbandoned), false);
 });
 
+
+function assertStatusChangePreservesTypedDates(
+    initialStatus,
+    newStatus,
+    typedDates,
+    expectedDates
+) {
+    const storage = createStorageContext({
+        "cq-test": {
+            id: "cq-test",
+            status: initialStatus
+        }
+    });
+
+    Object.entries(typedDates).forEach(([field, value]) => {
+        storage.inputs[field] = { value, focus() {} };
+    });
+
+    storage.context.setReadingStatus("cq-test", newStatus);
+
+    Object.entries(expectedDates).forEach(([field, value]) => {
+        assert.equal(storage.inputs[field].value, value);
+    });
+
+    return storage.context.getSavedLibraryWork("cq-test");
+}
+
+
+const typedForRead = assertStatusChangePreservesTypedDates(
+    "currently-reading",
+    "read",
+    {
+        dateStarted: "2026-09-10",
+        dateFinished: "2026-09-11",
+        dateAbandoned: "2026-09-12"
+    },
+    {
+        dateStarted: "2026-09-10",
+        dateFinished: "2026-09-11",
+        dateAbandoned: ""
+    }
+);
+assert.equal(typedForRead.dateStarted, null);
+assert.equal(typedForRead.dateFinished, null);
+
+assertStatusChangePreservesTypedDates(
+    "currently-reading",
+    "dnf",
+    {
+        dateStarted: "2026-09-10",
+        dateFinished: "2026-09-11",
+        dateAbandoned: "2026-09-12"
+    },
+    {
+        dateStarted: "2026-09-10",
+        dateFinished: "",
+        dateAbandoned: "2026-09-12"
+    }
+);
+
+assertStatusChangePreservesTypedDates(
+    "read",
+    "currently-reading",
+    {
+        dateStarted: "2026-09-10",
+        dateFinished: "2026-09-11",
+        dateAbandoned: "2026-09-12"
+    },
+    {
+        dateStarted: "2026-09-10",
+        dateFinished: "",
+        dateAbandoned: ""
+    }
+);
+
+assertStatusChangePreservesTypedDates(
+    "read",
+    "read",
+    {
+        dateStarted: "2026-09-10",
+        dateFinished: "2026-09-11",
+        dateAbandoned: "2026-09-12"
+    },
+    {
+        dateStarted: "2026-09-10",
+        dateFinished: "2026-09-11",
+        dateAbandoned: "2026-09-12"
+    }
+);
+
 const historicalSession = {
     id: "historical-session",
     status: "read",
