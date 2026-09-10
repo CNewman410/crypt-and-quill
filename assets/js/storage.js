@@ -610,7 +610,11 @@ function setReadingStatus(
             status
     };
 
-
+    const currentDates = getCurrentReadingSessionDates(savedWork);
+    const normalized = normalizeReadingSessionDates(
+        status,
+        currentDates
+    );
     const hasCurrentSession =
         Array.isArray(savedWork?.readingHistory) &&
         savedWork.readingHistory.length > 0;
@@ -638,6 +642,20 @@ function setReadingStatus(
 
 
     updateLibraryButtons();
+
+    const clearedInputFields = clearIncompatibleReadingDateInputs(status);
+    const clearedFields = Array.from(new Set([
+        ...normalized.clearedFields,
+        ...clearedInputFields
+    ]));
+    const consistencyMessage = getReadingDateConsistencyMessage(
+        status || normalized.status,
+        clearedFields
+    );
+
+    if (consistencyMessage) {
+        setReadingDatesMessage(consistencyMessage);
+    }
 
 }
 
@@ -768,6 +786,156 @@ function getReadingSessionStatus(
 }
 
 
+function getCurrentReadingSessionDates(
+    savedWork
+) {
+
+    const latestSession = Array.isArray(savedWork?.readingHistory)
+        ? savedWork.readingHistory[savedWork.readingHistory.length - 1]
+        : null;
+
+
+    return Object.fromEntries(
+        READING_DATE_FIELDS.map(
+            (field) => {
+
+                const source = latestSession &&
+                    Object.prototype.hasOwnProperty.call(latestSession, field)
+                    ? latestSession
+                    : savedWork;
+
+
+                return [field, getValidReadingDate(source?.[field])];
+
+            }
+        )
+    );
+
+}
+
+
+function normalizeReadingSessionDates(
+    status,
+    dates
+) {
+
+    const normalizedDates = Object.fromEntries(
+        READING_DATE_FIELDS.map(
+            (field) => [field, getValidReadingDate(dates?.[field])]
+        )
+    );
+
+    /*
+     * An explicit work status controls the latest session. Without one,
+     * inference stays deterministic: an abandoned date implies DNF first;
+     * otherwise a finished date implies Read. The matching terminal date
+     * wins, so one session can never retain both terminal outcomes.
+     */
+    const sessionStatus = READING_SESSION_STATUSES.includes(status)
+        ? status
+        : getReadingSessionStatus(normalizedDates);
+    const clearedFields = [];
+
+
+    if (
+        sessionStatus === "currently-reading" ||
+        sessionStatus === "dnf"
+    ) {
+        if (normalizedDates.dateFinished) {
+            clearedFields.push("dateFinished");
+        }
+
+        normalizedDates.dateFinished = null;
+    }
+
+
+    if (
+        sessionStatus === "currently-reading" ||
+        sessionStatus === "read"
+    ) {
+        if (normalizedDates.dateAbandoned) {
+            clearedFields.push("dateAbandoned");
+        }
+
+        normalizedDates.dateAbandoned = null;
+    }
+
+
+    return {
+        dates: normalizedDates,
+        status: sessionStatus,
+        clearedFields
+    };
+
+}
+
+
+function getReadingDateConsistencyMessage(
+    status,
+    clearedFields
+) {
+
+    const clearedFinished = clearedFields.includes("dateFinished");
+    const clearedAbandoned = clearedFields.includes("dateAbandoned");
+
+
+    if (clearedFinished && clearedAbandoned) {
+        return "Finished and DNF dates cleared because this work is marked Currently Reading.";
+    }
+
+
+    if (clearedFinished) {
+        return `Finished date cleared because this work is marked ${
+            status === "dnf" ? "Did Not Finish" : "Currently Reading"
+        }.`;
+    }
+
+
+    if (clearedAbandoned) {
+        return `DNF date cleared because this work is marked ${
+            status === "read" ? "Read" : "Currently Reading"
+        }.`;
+    }
+
+
+    return "";
+
+}
+
+
+function clearIncompatibleReadingDateInputs(
+    status
+) {
+
+    const incompatibleFields = {
+        "currently-reading": ["dateFinished", "dateAbandoned"],
+        read: ["dateAbandoned"],
+        dnf: ["dateFinished"]
+    }[status] || [];
+
+
+    return incompatibleFields.filter(
+        (field) => {
+
+            const input = document.querySelector(
+                `[data-reading-date="${field}"]`
+            );
+
+
+            if (!input || !input.value) {
+                return false;
+            }
+
+
+            input.value = "";
+            return true;
+
+        }
+    );
+
+}
+
+
 function isMeaningfulReadingSession(
     session
 ) {
@@ -845,14 +1013,16 @@ function buildCurrentReadingSessionChanges(
         ? savedWork.readingHistory.map((session) => ({ ...session }))
         : [];
 
-    const suppliedDates = dates || Object.fromEntries(
-        READING_DATE_FIELDS.map(
-            (field) => [field, getValidReadingDate(savedWork?.[field])]
-        )
+    const suppliedDates = dates || getCurrentReadingSessionDates(savedWork);
+
+    const normalized = normalizeReadingSessionDates(
+        status,
+        suppliedDates
     );
+    const currentDates = normalized.dates;
 
     const hasSuppliedDate = READING_DATE_FIELDS.some(
-        (field) => Boolean(suppliedDates[field])
+        (field) => Boolean(currentDates[field])
     );
 
     const sessionIsRequired =
@@ -884,14 +1054,12 @@ function buildCurrentReadingSessionChanges(
 
     if (session) {
 
-        session.status = sessionIsRequired
-            ? status
-            : getReadingSessionStatus(suppliedDates);
+        session.status = normalized.status;
 
 
         READING_DATE_FIELDS.forEach(
             (field) => {
-                session[field] = suppliedDates[field] || null;
+                session[field] = currentDates[field] || null;
             }
         );
 
@@ -900,7 +1068,7 @@ function buildCurrentReadingSessionChanges(
 
     return {
         readingHistory: history,
-        ...suppliedDates
+        ...currentDates
     };
 
 }
@@ -937,6 +1105,16 @@ function saveReadingDates(
 
 
     const savedWork = getSavedLibraryWork(workId);
+    const normalized = normalizeReadingSessionDates(
+        savedWork?.status,
+        changes
+    );
+    const consistencyMessage = getReadingDateConsistencyMessage(
+        normalized.status,
+        normalized.clearedFields
+    );
+
+    Object.assign(changes, normalized.dates);
     const hasDate = READING_DATE_FIELDS.some(
         (field) => Boolean(changes[field])
     );
@@ -961,6 +1139,10 @@ function saveReadingDates(
 
 
     updateReadingDateControls();
+
+    if (consistencyMessage) {
+        setReadingDatesMessage(consistencyMessage);
+    }
 
     updateLibraryButtons();
 
@@ -1371,6 +1553,22 @@ function updateReadingDateControls() {
                 ? datePieces.join(" · ")
                 : "Reading dates are optional.";
 
+    }
+
+}
+
+
+function setReadingDatesMessage(
+    text
+) {
+
+    const message = document.getElementById(
+        "reading-dates-message"
+    );
+
+
+    if (message) {
+        message.textContent = text;
     }
 
 }
