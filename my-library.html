@@ -134,86 +134,34 @@
 
             <div class="library-controls-inner">
 
-                <div
-                    class="library-view-switch"
-                    role="group"
-                    aria-label="Choose My Library view"
-                >
-                    <button class="library-view-button active" type="button" data-library-view="library" aria-pressed="true">
-                        Library
-                    </button>
-                    <button class="library-view-button" type="button" data-library-view="calendar" aria-pressed="false">
-                        Calendar
-                    </button>
+                <div class="library-view-control">
+
+                    <p class="library-control-label" id="library-view-label">
+                        View
+                    </p>
+
+                    <div
+                        class="library-view-switch"
+                        role="group"
+                        aria-labelledby="library-view-label"
+                    >
+                        <button class="library-view-button active" type="button" data-library-view="library" aria-pressed="true">
+                            Library
+                        </button>
+                        <button class="library-view-button" type="button" data-library-view="calendar" aria-pressed="false">
+                            Calendar
+                        </button>
+                    </div>
+
                 </div>
 
 
                 <div class="library-card-controls" id="library-card-controls">
 
 
-                <!-- FILTERS -->
+                    <!-- SORT -->
 
-                <div
-                    class="library-filter-group"
-                    role="group"
-                    aria-label="Filter personal library"
-                >
-
-                    <button
-                        class="library-filter-button active"
-                        type="button"
-                        data-library-filter="all"
-                    >
-                        All
-                    </button>
-
-                    <button
-                        class="library-filter-button"
-                        type="button"
-                        data-library-filter="want-to-read"
-                    >
-                        Want to Read
-                    </button>
-
-                    <button
-                        class="library-filter-button"
-                        type="button"
-                        data-library-filter="currently-reading"
-                    >
-                        Currently Reading
-                    </button>
-
-                    <button
-                        class="library-filter-button"
-                        type="button"
-                        data-library-filter="read"
-                    >
-                        Read
-                    </button>
-
-                    <button
-                        class="library-filter-button"
-                        type="button"
-                        data-library-filter="dnf"
-                    >
-                        Did Not Finish
-                    </button>
-
-                    <button
-                        class="library-filter-button"
-                        type="button"
-                        data-library-filter="favorites"
-                    >
-                        Favorites
-                    </button>
-
-                </div>
-
-
-
-                <!-- SORT -->
-
-                <div class="library-sort-group">
+                    <div class="library-sort-group">
 
                     <label for="library-sort">
                         Sort
@@ -246,7 +194,80 @@
 
                     </select>
 
-                </div>
+                    </div>
+
+
+                    <!-- FILTERS -->
+
+                    <div class="library-filter-control">
+
+                        <p class="library-control-label" id="library-filter-label">
+                            Filter Library
+                        </p>
+
+                        <div
+                            class="library-filter-group"
+                            role="group"
+                            aria-labelledby="library-filter-label"
+                        >
+
+                    <button
+                        class="library-filter-button active"
+                        type="button"
+                        data-library-filter="all"
+                        aria-pressed="true"
+                    >
+                        All
+                    </button>
+
+                    <button
+                        class="library-filter-button"
+                        type="button"
+                        data-library-filter="want-to-read"
+                        aria-pressed="false"
+                    >
+                        Want to Read
+                    </button>
+
+                    <button
+                        class="library-filter-button"
+                        type="button"
+                        data-library-filter="currently-reading"
+                        aria-pressed="false"
+                    >
+                        Currently Reading
+                    </button>
+
+                    <button
+                        class="library-filter-button"
+                        type="button"
+                        data-library-filter="read"
+                        aria-pressed="false"
+                    >
+                        Read
+                    </button>
+
+                    <button
+                        class="library-filter-button"
+                        type="button"
+                        data-library-filter="dnf"
+                        aria-pressed="false"
+                    >
+                        Did Not Finish
+                    </button>
+
+                    <button
+                        class="library-filter-button"
+                        type="button"
+                        data-library-filter="favorites"
+                        aria-pressed="false"
+                    >
+                        Favorites
+                    </button>
+
+                        </div>
+
+                    </div>
 
                 </div>
 

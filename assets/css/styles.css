@@ -2993,10 +2993,10 @@ img {
 
     padding: 28px 0;
 
-    display: flex;
+    display: grid;
 
-    align-items: center;
-    justify-content: space-between;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: end;
 
     gap: 24px;
 }
@@ -3004,14 +3004,7 @@ img {
 
 .library-card-controls {
 
-    display: flex;
-
-    align-items: center;
-    justify-content: space-between;
-
-    flex: 1;
-
-    gap: 30px;
+    display: contents;
 }
 
 
@@ -3030,6 +3023,26 @@ img {
     background: var(--background);
 
     border: 1px solid var(--border-light);
+}
+
+
+.library-view-control,
+.library-filter-control {
+    min-width: 0;
+}
+
+
+.library-control-label {
+    margin: 0 0 8px;
+
+    color: var(--gold-soft);
+
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 0.64rem;
+    font-weight: 700;
+
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
 }
 
 
@@ -3083,15 +3096,21 @@ img {
 
     flex-wrap: wrap;
 
-    gap: 8px;
+    gap: 7px;
+}
+
+
+.library-filter-control {
+    grid-column: 1 / -1;
+    grid-row: 2;
 }
 
 
 .library-filter-button {
 
-    min-height: 40px;
+    min-height: 36px;
 
-    padding: 0 14px;
+    padding: 0 12px;
 
     background: transparent;
 
@@ -3104,7 +3123,7 @@ img {
         Helvetica,
         sans-serif;
 
-    font-size: 0.69rem;
+    font-size: 0.66rem;
 
     font-weight: 700;
 
@@ -3129,6 +3148,12 @@ img {
 }
 
 
+.library-filter-button:focus-visible {
+    outline: 1px solid var(--gold);
+    outline-offset: 3px;
+}
+
+
 .library-filter-button.active {
 
     background: var(--burgundy);
@@ -3148,6 +3173,9 @@ img {
     align-items: center;
 
     gap: 10px;
+
+    grid-column: 3;
+    grid-row: 1;
 }
 
 
@@ -3718,18 +3746,9 @@ img {
     }
 
 
-    .library-controls-inner {
-
-        align-items: flex-start;
-
-        flex-direction: column;
-    }
-
-
-    .library-card-controls {
-        width: 100%;
-        align-items: flex-start;
-        flex-direction: column;
+    .library-filter-group {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(max-content, 1fr));
     }
 
 }
@@ -3737,6 +3756,43 @@ img {
 
 
 @media (max-width: 650px) {
+
+    .library-controls-inner {
+        grid-template-columns: 1fr;
+        align-items: start;
+    }
+
+
+    .library-view-control {
+        grid-column: 1;
+        grid-row: 1;
+    }
+
+
+    .library-sort-group,
+    .library-filter-control {
+        grid-column: 1;
+    }
+
+
+    .library-sort-group {
+        grid-row: 2;
+    }
+
+
+    .library-filter-control {
+        grid-row: 3;
+    }
+
+
+    .library-filter-group {
+        display: flex;
+    }
+
+
+    .library-filter-button {
+        min-height: 40px;
+    }
 
     .reading-calendar-header {
         align-items: flex-start;
