@@ -233,6 +233,13 @@ Priority: MEDIUM
 
 - [ ] indicate whether a written review exists
 
+## Reading Calendar
+
+- [x] monthly Started, Finished, and Did Not Finish events from reading history
+- [x] preserve exact, month-only, and year-only date precision
+- [x] support repeat-reading sessions
+- [ ] add calendar statistics and longer-range archive views
+
 ## Additional Filters
 
 Potential filters:

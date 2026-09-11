@@ -2998,7 +2998,82 @@ img {
     align-items: center;
     justify-content: space-between;
 
+    gap: 24px;
+}
+
+
+.library-card-controls {
+
+    display: flex;
+
+    align-items: center;
+    justify-content: space-between;
+
+    flex: 1;
+
     gap: 30px;
+}
+
+
+.library-card-controls[hidden],
+.reading-calendar-event[hidden] {
+    display: none;
+}
+
+
+.library-view-switch {
+
+    display: inline-flex;
+
+    padding: 3px;
+
+    background: var(--background);
+
+    border: 1px solid var(--border-light);
+}
+
+
+.library-view-button {
+
+    min-height: 34px;
+
+    padding: 0 13px;
+
+    background: transparent;
+
+    border: 0;
+
+    color: var(--text-muted);
+
+    font-family: Arial, Helvetica, sans-serif;
+
+    font-size: 0.66rem;
+    font-weight: 700;
+
+    letter-spacing: 0.08em;
+
+    text-transform: uppercase;
+}
+
+
+.library-view-button:hover,
+.library-view-button:focus-visible {
+    color: var(--parchment);
+}
+
+
+.library-view-button:focus-visible,
+.reading-calendar-navigation button:focus-visible,
+.reading-calendar-event:focus-visible,
+.reading-calendar-overflow:focus-visible {
+    outline: 1px solid var(--gold);
+    outline-offset: 3px;
+}
+
+
+.library-view-button.active {
+    background: var(--burgundy);
+    color: #f5ede1;
 }
 
 
@@ -3431,6 +3506,204 @@ img {
 }
 
 
+/* ========================================
+   READING CALENDAR
+   ======================================== */
+
+.reading-calendar-section {
+    min-height: 600px;
+}
+
+
+.reading-calendar-inner {
+    width: min(calc(100% - 40px), var(--max-width));
+    margin: 0 auto;
+    padding: 65px 0 100px;
+}
+
+
+.reading-calendar-header {
+    margin-bottom: 30px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 24px;
+}
+
+
+.reading-calendar-header h2 {
+    margin: 0;
+    color: var(--parchment);
+    font-size: clamp(2.2rem, 4vw, 3.4rem);
+    font-weight: 400;
+    line-height: 1.05;
+}
+
+
+.reading-calendar-navigation {
+    display: flex;
+    gap: 7px;
+}
+
+
+.reading-calendar-navigation button,
+.reading-calendar-overflow {
+    padding: 8px 11px;
+    background: transparent;
+    border: 1px solid var(--border-light);
+    color: var(--text-soft);
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 0.68rem;
+    letter-spacing: 0.04em;
+}
+
+
+.reading-calendar-navigation button:hover,
+.reading-calendar-overflow:hover {
+    border-color: var(--gold-soft);
+    color: var(--parchment);
+}
+
+
+.reading-calendar-scroll {
+    overflow-x: auto;
+}
+
+
+.reading-calendar-grid {
+    min-width: 820px;
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    border-top: 1px solid var(--border-light);
+    border-left: 1px solid var(--border-light);
+    background: rgba(12, 11, 11, 0.5);
+}
+
+
+.reading-calendar-weekday {
+    padding: 11px;
+    border-right: 1px solid var(--border-light);
+    border-bottom: 1px solid var(--border-light);
+    color: var(--gold);
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 0.67rem;
+    font-weight: 700;
+    letter-spacing: 0.11em;
+    text-align: center;
+    text-transform: uppercase;
+}
+
+
+.reading-calendar-day {
+    min-height: 126px;
+    padding: 9px;
+    border-right: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    background: linear-gradient(145deg, rgba(33, 27, 27, 0.66), rgba(19, 17, 17, 0.85));
+}
+
+
+.reading-calendar-day-outside {
+    background: rgba(12, 11, 11, 0.35);
+}
+
+
+.reading-calendar-day-number {
+    display: block;
+    margin-bottom: 6px;
+    color: var(--text-muted);
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 0.68rem;
+}
+
+
+.reading-calendar-event {
+    display: block;
+    margin-top: 5px;
+    padding: 5px 6px;
+    overflow: hidden;
+    border-left: 2px solid var(--gold-soft);
+    color: var(--text-soft);
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 0.66rem;
+    line-height: 1.35;
+    text-overflow: ellipsis;
+}
+
+
+.reading-calendar-event:hover {
+    background: var(--surface-hover);
+    color: var(--parchment);
+}
+
+
+.reading-calendar-event-finished {
+    background: rgba(111, 32, 40, 0.46);
+    border-left-color: var(--gold);
+    color: var(--parchment);
+    font-weight: 700;
+}
+
+
+.reading-calendar-event-started {
+    border-left-color: var(--border-light);
+    color: var(--text-muted);
+}
+
+
+.reading-calendar-event-dnf {
+    border: 1px dashed var(--burgundy-light);
+    border-left-width: 2px;
+    color: var(--text-soft);
+}
+
+
+.reading-calendar-overflow {
+    width: 100%;
+    margin-top: 5px;
+    padding: 3px 6px;
+    text-align: left;
+}
+
+
+.reading-calendar-approximate {
+    margin-top: 28px;
+    padding: 24px;
+    background: var(--background-soft);
+    border: 1px solid var(--border);
+}
+
+
+.reading-calendar-approximate h3 {
+    margin: 0 0 14px;
+    color: var(--parchment);
+    font-size: 1.2rem;
+    font-weight: 400;
+}
+
+
+.reading-calendar-approximate ul {
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 7px;
+    list-style: none;
+}
+
+
+.reading-calendar-approximate .reading-calendar-event {
+    display: inline-block;
+}
+
+
+.reading-calendar-year-note {
+    margin: 22px 0 0;
+    color: var(--text-muted);
+    font-size: 0.84rem;
+    font-style: italic;
+}
+
+
 
 /* ========================================
    MY LIBRARY RESPONSIVE
@@ -3452,11 +3725,38 @@ img {
         flex-direction: column;
     }
 
+
+    .library-card-controls {
+        width: 100%;
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
 }
 
 
 
 @media (max-width: 650px) {
+
+    .reading-calendar-header {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+
+    .reading-calendar-navigation {
+        width: 100%;
+    }
+
+
+    .reading-calendar-navigation button {
+        flex: 1;
+    }
+
+
+    .reading-calendar-day {
+        min-height: 108px;
+    }
 
     .library-work-grid {
         grid-template-columns: 1fr;
