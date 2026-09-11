@@ -3032,6 +3032,12 @@ img {
 }
 
 
+.library-view-control {
+    grid-column: 1;
+    grid-row: 1;
+}
+
+
 .library-control-label {
     margin: 0 0 8px;
 
@@ -3094,7 +3100,7 @@ img {
 
     display: flex;
 
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
 
     gap: 7px;
 }
@@ -3103,6 +3109,8 @@ img {
 .library-filter-control {
     grid-column: 1 / -1;
     grid-row: 2;
+    justify-self: stretch;
+    text-align: left;
 }
 
 
@@ -3176,6 +3184,7 @@ img {
 
     grid-column: 3;
     grid-row: 1;
+    justify-self: end;
 }
 
 
