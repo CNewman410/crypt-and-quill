@@ -101,4 +101,64 @@ assert.equal(context.getLedgerPageCount({ type: "Short Story", pageCount: 20, pa
 assert.equal(context.getLedgerPageCount({ type: "Collection", pageCount: 400 }), 400);
 assert.equal(context.hasMeaningfulLedgerData([{ status: "want-to-read", readingHistory: [] }]), false);
 
+/* The year switcher keeps its active control operable and remembers that year
+ * while the user briefly views the All-Time ledger. */
+const ledgerButton = (action) => ({
+    dataset: { ledgerAction: action },
+    disabled: false,
+    textContent: "",
+    attributes: {},
+    listeners: {},
+    addEventListener(type, listener) { this.listeners[type] = listener; },
+    setAttribute(name, value) { this.attributes[name] = value; }
+});
+const ledgerButtons = Object.fromEntries(
+    ["previous", "selected", "next", "all"].map((action) => [action, ledgerButton(action)])
+);
+context.document.querySelector = (selector) => {
+    const match = /data-ledger-action="([^"]+)"/.exec(selector);
+    return match ? ledgerButtons[match[1]] : element();
+};
+context.document.querySelectorAll = (selector) =>
+    selector === "[data-ledger-action]" ? Object.values(ledgerButtons) : [];
+context.testLedgerWorks = works;
+vm.runInContext(`
+    savedWorks = testLedgerWorks;
+    renderReadingLedger = () => {
+        renderLedgerNavigation(getAvailableReadingYears(savedWorks), selectedLedgerPeriod);
+    };
+    addLedgerNavigationEvents();
+    selectedLedgerPeriod = 2024;
+    renderReadingLedger();
+`, context);
+
+assert.equal(ledgerButtons.selected.disabled, false);
+assert.equal(ledgerButtons.selected.attributes["aria-pressed"], "true");
+assert.equal(ledgerButtons.selected.attributes["aria-label"], "2024 reading record selected");
+assert.equal(ledgerButtons.previous.disabled, false);
+assert.equal(ledgerButtons.next.disabled, false);
+
+ledgerButtons.all.listeners.click();
+assert.equal(ledgerButtons.all.attributes["aria-pressed"], "true");
+assert.equal(ledgerButtons.selected.attributes["aria-pressed"], "false");
+assert.equal(ledgerButtons.selected.textContent, "2024");
+assert.equal(ledgerButtons.selected.dataset.ledgerYear, "2024");
+assert.equal(ledgerButtons.previous.disabled, true);
+assert.equal(ledgerButtons.next.disabled, true);
+
+ledgerButtons.selected.listeners.click();
+assert.equal(ledgerButtons.selected.attributes["aria-pressed"], "true");
+assert.equal(ledgerButtons.all.attributes["aria-pressed"], "false");
+assert.equal(ledgerButtons.selected.textContent, "2024");
+
+vm.runInContext("selectedLedgerPeriod = 2023; renderReadingLedger();", context);
+assert.equal(ledgerButtons.previous.disabled, true);
+assert.equal(ledgerButtons.next.disabled, false);
+ledgerButtons.next.listeners.click();
+assert.equal(ledgerButtons.selected.textContent, "2024");
+
+vm.runInContext("selectedLedgerPeriod = 2026; renderReadingLedger();", context);
+assert.equal(ledgerButtons.previous.disabled, false);
+assert.equal(ledgerButtons.next.disabled, true);
+
 console.log("Reading Ledger year, All-Time, partial-date, rating, and safe-page tests passed.");
