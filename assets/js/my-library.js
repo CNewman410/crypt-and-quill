@@ -1296,10 +1296,12 @@ async function renderReadingLedger() {
     const empty = document.getElementById("reading-ledger-empty");
     const content = document.getElementById("reading-ledger-content");
 
-    empty.hidden = savedWorks.length !== 0;
-    content.hidden = savedWorks.length === 0;
+    const hasSessions = hasMeaningfulLedgerData(savedWorks);
 
-    if (savedWorks.length === 0) {
+    empty.hidden = hasSessions;
+    content.hidden = !hasSessions;
+
+    if (!hasSessions) {
         return;
     }
 
@@ -1312,6 +1314,11 @@ async function renderReadingLedger() {
     renderLedgerRankedList("ledger-authors-list", "ledger-authors-section", ledger.authors);
     renderLedgerNotes(ledger);
 
+}
+
+
+function hasMeaningfulLedgerData(works) {
+    return works.some((work) => getLedgerSessions(work).length > 0);
 }
 
 
@@ -1353,7 +1360,7 @@ function calculateReadingLedger(works, year) {
         ["currently-reading", "read", "dnf"].includes(entry.session.status)
     );
     const completedWorks = uniqueLedgerWorks(completed.map((entry) => entry.work));
-    const ratings = works
+    const ratings = completedWorks
         .map((work) => Number(work.overallRating))
         .filter((rating) => Number.isFinite(rating) && rating >= 0.5 && rating <= 5);
     const pageEntries = completed
@@ -1377,8 +1384,8 @@ function calculateReadingLedger(works, year) {
         current: works.filter((work) => work.status === "currently-reading").length,
         completedThisYear: completed.filter((entry) => String(entry.session.dateFinished || "").startsWith(String(year))).length,
         monthlyCompletions,
-        genres: countLedgerValues(completedWorks.flatMap((work) => work.genres || [])),
-        authors: countLedgerValues(completedWorks.map((work) => work.author).filter(Boolean)),
+        genres: countLedgerValues(completed.flatMap((entry) => entry.work.genres || [])),
+        authors: countLedgerValues(completed.map((entry) => entry.work.author).filter(Boolean)),
         approximatePages: pageEntries.reduce((total, entry) => total + entry.pages, 0),
         ratedCount: ratings.length,
         averageRating: ratings.length
@@ -1393,7 +1400,9 @@ function calculateReadingLedger(works, year) {
 function getLedgerSessions(work) {
 
     const history = Array.isArray(work.readingHistory)
-        ? work.readingHistory.filter((session) => session && session.status)
+        ? work.readingHistory.filter((session) =>
+            session && ["currently-reading", "read", "dnf"].includes(session.status)
+        )
         : [];
 
     if (history.length > 0) {

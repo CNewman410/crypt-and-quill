@@ -378,6 +378,51 @@ function saveLibraryWork(
 }
 
 
+/*
+ * Keep a small bibliographic snapshot with an existing personal record.
+ * It is deliberately not personal data: it cannot create a record or keep
+ * an otherwise empty one alive, and does not change the user's update time.
+ */
+function saveLibraryPageCountSnapshot(
+    workId,
+    value
+) {
+
+    if (!workId) {
+        return;
+    }
+
+
+    const pageCount = Number(value);
+
+    if (!Number.isInteger(pageCount) || pageCount <= 0) {
+        return;
+    }
+
+
+    const library = getPersonalLibrary();
+    const existing = library[workId];
+
+    if (!existing || !hasSavedPersonalData(existing)) {
+        return;
+    }
+
+
+    if (existing.pageCount === pageCount) {
+        return;
+    }
+
+
+    library[workId] = {
+        ...existing,
+        pageCount
+    };
+
+    savePersonalLibrary(library);
+
+}
+
+
 
 /* ========================================
    SAVED DATA CHECK
@@ -519,6 +564,11 @@ function getCurrentWorkMetadata() {
             : "openlibrary";
 
 
+    const pageCount = typeof getCurrentWorkPageCount === "function"
+        ? Number(getCurrentWorkPageCount())
+        : null;
+
+
     return {
 
         title:
@@ -539,7 +589,11 @@ function getCurrentWorkMetadata() {
             "Work",
 
         source:
-            source
+            source,
+
+        ...(Number.isInteger(pageCount) && pageCount > 0
+            ? { pageCount }
+            : {})
 
     };
 

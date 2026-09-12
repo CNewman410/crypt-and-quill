@@ -70,6 +70,12 @@ const detailsContext = {
     storageGetReview: () => null
 };
 
+let savedPageSnapshot = null;
+detailsContext.getCurrentLibraryWorkId = () => "cq-description-test";
+detailsContext.saveLibraryPageCountSnapshot = (workId, pageCount) => {
+    savedPageSnapshot = { workId, pageCount };
+};
+
 loadScript("assets/js/work-details.js", detailsContext);
 
 
@@ -89,6 +95,13 @@ const authoritativeModel = detailsContext.createCuratedDetailsModel(
 
 assert.equal(authoritativeModel.description, curatedDescription);
 assert.equal(authoritativeModel.coverId, 123);
+
+detailsContext.renderEditionMetadata({ pageCount: 704 });
+assert.deepEqual(savedPageSnapshot, {
+    workId: "cq-description-test",
+    pageCount: 704
+});
+assert.equal(detailsContext.getCurrentWorkPageCount(), 704);
 
 const fallbackModel = detailsContext.createCuratedDetailsModel(
     { ...curatedModel, description: null },
