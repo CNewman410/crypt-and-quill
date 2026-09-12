@@ -99,6 +99,14 @@ const openLibraryLink =
     );
 
 
+let currentWorkPageCount = null;
+
+
+function getCurrentWorkPageCount() {
+    return currentWorkPageCount;
+}
+
+
 
 /* ========================================
    INITIALIZE
@@ -818,6 +826,19 @@ function renderEditionMetadata(
         "";
 
 
+    currentWorkPageCount = normalizePageCount(
+        edition?.pageCount
+    );
+
+
+    if (currentWorkPageCount !== null) {
+        saveLibraryPageCountSnapshot(
+            getCurrentLibraryWorkId(),
+            currentWorkPageCount
+        );
+    }
+
+
     if (!edition) {
 
         editionSection.hidden =
@@ -869,6 +890,19 @@ function renderEditionMetadata(
 
     editionSection.hidden =
         editionMetadata.children.length === 0;
+
+}
+
+
+function normalizePageCount(
+    value
+) {
+
+    const pageCount = Number(value);
+
+    return Number.isInteger(pageCount) && pageCount > 0
+        ? pageCount
+        : null;
 
 }
 

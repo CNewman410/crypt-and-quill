@@ -68,6 +68,12 @@ const readingCalendarSection =
     );
 
 
+const readingLedgerSection =
+    document.getElementById(
+        "reading-ledger-section"
+    );
+
+
 const libraryCardControls =
     document.getElementById(
         "library-card-controls"
@@ -137,6 +143,7 @@ function addLibraryViewEvents() {
 function updateLibraryView() {
 
     const showCalendar = activeLibraryView === "calendar";
+    const showLedger = activeLibraryView === "ledger";
 
 
     libraryViewButtons.forEach((button) => {
@@ -146,15 +153,21 @@ function updateLibraryView() {
     });
 
 
-    libraryResultsSection.hidden = showCalendar;
+    libraryResultsSection.hidden = showCalendar || showLedger;
     readingCalendarSection.hidden = !showCalendar;
-    libraryCardControls.hidden = showCalendar;
+    readingLedgerSection.hidden = !showLedger;
+    libraryCardControls.hidden = showCalendar || showLedger;
 
 
     if (showCalendar) {
         /* Calendar intentionally shows every history event, independent of
          * the card-view shelf filter selected by the user. */
         renderReadingCalendar();
+    }
+
+
+    if (showLedger) {
+        renderReadingLedger();
     }
 
 }
@@ -1267,6 +1280,270 @@ function renderApproximateCalendarEvents(
         const item = document.createElement("li");
         item.appendChild(createReadingEventLink(event));
         list.appendChild(item);
+    });
+
+}
+
+
+/* ========================================
+   READING LEDGER
+   ======================================== */
+
+async function renderReadingLedger() {
+
+    savedWorks = getSavedLibraryWorks();
+
+    const empty = document.getElementById("reading-ledger-empty");
+    const content = document.getElementById("reading-ledger-content");
+
+    const hasSessions = hasMeaningfulLedgerData(savedWorks);
+
+    empty.hidden = hasSessions;
+    content.hidden = !hasSessions;
+
+    if (!hasSessions) {
+        return;
+    }
+
+    const enrichedWorks = await getLedgerWorks(savedWorks);
+    const ledger = calculateReadingLedger(enrichedWorks, new Date().getFullYear());
+
+    renderLedgerStats(ledger);
+    renderLedgerMonthlyChart(ledger.monthlyCompletions);
+    renderLedgerRankedList("ledger-genres-list", "ledger-genres-section", ledger.genres);
+    renderLedgerRankedList("ledger-authors-list", "ledger-authors-section", ledger.authors);
+    renderLedgerNotes(ledger);
+
+}
+
+
+function hasMeaningfulLedgerData(works) {
+    return works.some((work) => getLedgerSessions(work).length > 0);
+}
+
+
+async function getLedgerWorks(works) {
+
+    try {
+        const response = await fetch("data/works.json");
+
+        if (!response.ok) {
+            return works;
+        }
+
+        const curatedWorks = await response.json();
+        const curatedById = new Map(curatedWorks.map((work) => [work.id, work]));
+
+        return works.map((work) => ({
+            ...curatedById.get(work.id),
+            ...work,
+            genres: Array.isArray(work.genres)
+                ? work.genres
+                : curatedById.get(work.id)?.genres || []
+        }));
+    }
+    catch (error) {
+        console.warn("Crypt & Quill ledger classifications could not be loaded.", error);
+        return works;
+    }
+
+}
+
+
+function calculateReadingLedger(works, year) {
+
+    const sessions = works.flatMap((work) => getLedgerSessions(work));
+    const completed = sessions.filter((entry) => entry.session.status === "read");
+    const abandoned = sessions.filter((entry) => entry.session.status === "dnf");
+    const started = sessions.filter((entry) =>
+        Boolean(entry.session.dateStarted) ||
+        ["currently-reading", "read", "dnf"].includes(entry.session.status)
+    );
+    const completedWorks = uniqueLedgerWorks(completed.map((entry) => entry.work));
+    const ratings = completedWorks
+        .map((work) => Number(work.overallRating))
+        .filter((rating) => Number.isFinite(rating) && rating >= 0.5 && rating <= 5);
+    const pageEntries = completed
+        .map((entry) => ({ work: entry.work, pages: getLedgerPageCount(entry.work) }))
+        .filter((entry) => entry.pages !== null);
+    const monthlyCompletions = Array(12).fill(0);
+
+    completed.forEach((entry) => {
+        const date = entry.session.dateFinished;
+        if (typeof date === "string" && date.startsWith(`${year}-`) && date.length >= 7) {
+            const month = Number(date.slice(5, 7));
+            if (month >= 1 && month <= 12) monthlyCompletions[month - 1] += 1;
+        }
+    });
+
+    return {
+        year,
+        completed: completed.length,
+        started: started.length,
+        abandoned: abandoned.length,
+        current: works.filter((work) => work.status === "currently-reading").length,
+        completedThisYear: completed.filter((entry) => String(entry.session.dateFinished || "").startsWith(String(year))).length,
+        monthlyCompletions,
+        genres: countLedgerValues(completed.flatMap((entry) => entry.work.genres || [])),
+        authors: countLedgerValues(completed.map((entry) => entry.work.author).filter(Boolean)),
+        approximatePages: pageEntries.reduce((total, entry) => total + entry.pages, 0),
+        ratedCount: ratings.length,
+        averageRating: ratings.length
+            ? ratings.reduce((total, rating) => total + rating, 0) / ratings.length
+            : null,
+        longest: pageEntries.sort((first, second) => second.pages - first.pages)[0] || null
+    };
+
+}
+
+
+function getLedgerSessions(work) {
+
+    const history = Array.isArray(work.readingHistory)
+        ? work.readingHistory.filter((session) =>
+            session && ["currently-reading", "read", "dnf"].includes(session.status)
+        )
+        : [];
+
+    if (history.length > 0) {
+        return history.map((session) => ({ work, session }));
+    }
+
+    return ["currently-reading", "read", "dnf"].includes(work.status)
+        ? [{ work, session: {
+            status: work.status,
+            dateStarted: work.dateStarted || null,
+            dateFinished: work.dateFinished || null,
+            dateAbandoned: work.dateAbandoned || null
+        } }]
+        : [];
+
+}
+
+
+function uniqueLedgerWorks(works) {
+    return [...new Map(works.map((work) => [work.id || `${work.title}:${work.author}`, work])).values()];
+}
+
+
+function getLedgerPageCount(work) {
+
+    const candidates = [
+        work.pageCount,
+        work.representativeEdition?.pageCount,
+        work.edition?.pageCount
+    ];
+    const pages = candidates.map(Number).find((value) => Number.isFinite(value) && value > 0);
+    return pages || null;
+
+}
+
+
+function countLedgerValues(values) {
+
+    const totals = new Map();
+    values.forEach((value) => totals.set(value, (totals.get(value) || 0) + 1));
+
+    return [...totals.entries()]
+        .map(([label, count]) => ({ label, count }))
+        .sort((first, second) => second.count - first.count || first.label.localeCompare(second.label));
+
+}
+
+
+function renderLedgerStats(ledger) {
+
+    document.getElementById("ledger-annual-heading").textContent = `${ledger.year} & All Recorded Years`;
+    const stats = [
+        ["Completed", ledger.completed, "all recorded sessions"],
+        ["Started", ledger.started, "all recorded sessions"],
+        ["Did Not Finish", ledger.abandoned, "all recorded sessions"],
+        ["Completed This Year", ledger.completedThisYear, String(ledger.year)],
+        ["Currently Reading", ledger.current, "on your active shelf"]
+    ];
+    const container = document.getElementById("ledger-annual-stats");
+    container.innerHTML = "";
+
+    stats.forEach(([label, value, note]) => {
+        const article = document.createElement("article");
+        const heading = document.createElement("h4");
+        const number = document.createElement("strong");
+        const detail = document.createElement("p");
+        heading.textContent = label;
+        number.textContent = String(value);
+        detail.textContent = note;
+        article.append(heading, number, detail);
+        container.appendChild(article);
+    });
+
+}
+
+
+function renderLedgerMonthlyChart(months) {
+
+    const chart = document.getElementById("ledger-monthly-chart");
+    const maximum = Math.max(...months, 1);
+    chart.innerHTML = "";
+    document.getElementById("ledger-monthly-section").hidden = !months.some(Boolean);
+
+    months.forEach((count, index) => {
+        const row = document.createElement("div");
+        const label = document.createElement("span");
+        const track = document.createElement("span");
+        const bar = document.createElement("span");
+        const value = document.createElement("strong");
+        label.textContent = new Intl.DateTimeFormat(undefined, { month: "short" }).format(new Date(2000, index, 1));
+        bar.style.width = `${(count / maximum) * 100}%`;
+        track.className = "ledger-chart-track";
+        bar.className = "ledger-chart-bar";
+        value.textContent = String(count);
+        track.appendChild(bar);
+        row.append(label, track, value);
+        chart.appendChild(row);
+    });
+
+}
+
+
+function renderLedgerRankedList(listId, sectionId, entries) {
+
+    const list = document.getElementById(listId);
+    document.getElementById(sectionId).hidden = entries.length === 0;
+    list.innerHTML = "";
+
+    entries.slice(0, 6).forEach((entry) => {
+        const item = document.createElement("li");
+        const label = document.createElement("span");
+        const count = document.createElement("strong");
+        label.textContent = entry.label;
+        count.textContent = String(entry.count);
+        item.append(label, count);
+        list.appendChild(item);
+    });
+
+}
+
+
+function renderLedgerNotes(ledger) {
+
+    const notes = [];
+    if (ledger.approximatePages > 0) notes.push(["Approximate pages read", ledger.approximatePages.toLocaleString()]);
+    if (ledger.averageRating !== null) notes.push(["Average rating", `${ledger.averageRating.toFixed(1)} / 5 (${ledger.ratedCount} rated)`]);
+    if (ledger.longest) notes.push(["Longest work read", `${getLibraryTitle(ledger.longest.work)} · ${ledger.longest.pages.toLocaleString()} pages`]);
+
+    const section = document.getElementById("ledger-notes-section");
+    const container = document.getElementById("ledger-notes");
+    section.hidden = notes.length === 0;
+    container.innerHTML = "";
+
+    notes.forEach(([label, value]) => {
+        const row = document.createElement("p");
+        const term = document.createElement("span");
+        const detail = document.createElement("strong");
+        term.textContent = label;
+        detail.textContent = value;
+        row.append(term, detail);
+        container.appendChild(row);
     });
 
 }
