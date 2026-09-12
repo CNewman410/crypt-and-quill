@@ -96,6 +96,8 @@ let activeLibraryView =
 let visibleCalendarMonth =
     getLocalCalendarMonth();
 
+let selectedLedgerPeriod = null;
+
 
 
 /* ========================================
@@ -122,8 +124,37 @@ function initializeMyLibrary() {
 
     addCalendarNavigationEvents();
 
+    addLedgerNavigationEvents();
+
 
     renderMyLibrary();
+
+}
+
+
+function addLedgerNavigationEvents() {
+
+    document.querySelectorAll("[data-ledger-action]").forEach((button) => {
+        button.addEventListener("click", () => {
+            const action = button.dataset.ledgerAction;
+            const years = getAvailableReadingYears(savedWorks);
+
+            if (action === "all") {
+                selectedLedgerPeriod = "all";
+            }
+            else if (action === "selected") {
+                selectedLedgerPeriod = Number(button.dataset.ledgerYear);
+            }
+            else if (action === "previous" || action === "next") {
+                const currentIndex = years.indexOf(selectedLedgerPeriod);
+                const offset = action === "previous" ? -1 : 1;
+                const nextYear = years[currentIndex + offset];
+                if (nextYear) selectedLedgerPeriod = nextYear;
+            }
+
+            renderReadingLedger();
+        });
+    });
 
 }
 
@@ -1298,6 +1329,13 @@ async function renderReadingLedger() {
 
     const hasSessions = hasMeaningfulLedgerData(savedWorks);
 
+    const availableYears = getAvailableReadingYears(savedWorks);
+    if (selectedLedgerPeriod === null) {
+        selectedLedgerPeriod = getInitialLedgerPeriod(availableYears, new Date().getFullYear());
+    }
+
+    renderLedgerNavigation(availableYears, selectedLedgerPeriod);
+
     empty.hidden = hasSessions;
     content.hidden = !hasSessions;
 
@@ -1306,14 +1344,86 @@ async function renderReadingLedger() {
     }
 
     const enrichedWorks = await getLedgerWorks(savedWorks);
-    const ledger = calculateReadingLedger(enrichedWorks, new Date().getFullYear());
+    const ledger = calculateReadingLedger(enrichedWorks, selectedLedgerPeriod);
+
+    const hasPeriodEvents = ledger.completed > 0 || ledger.started > 0 || ledger.abandoned > 0;
+    empty.hidden = hasPeriodEvents;
+    content.hidden = !hasPeriodEvents;
+
+    if (!hasPeriodEvents) {
+        empty.querySelector("h3").textContent = selectedLedgerPeriod === "all"
+            ? "No entries have been inscribed."
+            : `No reading entries are recorded for ${selectedLedgerPeriod}.`;
+        return;
+    }
 
     renderLedgerStats(ledger);
-    renderLedgerMonthlyChart(ledger.monthlyCompletions);
+    renderLedgerChart(ledger);
     renderLedgerRankedList("ledger-genres-list", "ledger-genres-section", ledger.genres);
     renderLedgerRankedList("ledger-authors-list", "ledger-authors-section", ledger.authors);
     renderLedgerNotes(ledger);
 
+}
+
+
+function getReadingDateParts(value) {
+    const match = typeof value === "string"
+        ? /^(\d{4})(?:-(\d{2})(?:-(\d{2}))?)?$/.exec(value)
+        : null;
+
+    if (!match) return null;
+
+    const year = Number(match[1]);
+    const month = match[2] ? Number(match[2]) : null;
+    const day = match[3] ? Number(match[3]) : null;
+    if (year < 1 || (month !== null && (month < 1 || month > 12)) ||
+        (day !== null && (day < 1 || day > 31))) return null;
+
+    return { year, month, day };
+}
+
+
+function getAvailableReadingYears(works) {
+    const years = new Set();
+
+    works.flatMap((work) => getLedgerSessions(work)).forEach(({ session }) => {
+        [session.dateStarted, session.dateFinished, session.dateAbandoned].forEach((date) => {
+            const parts = getReadingDateParts(date);
+            if (parts) years.add(parts.year);
+        });
+    });
+
+    return [...years].sort((first, second) => first - second);
+}
+
+
+function getInitialLedgerPeriod(years, currentYear) {
+    if (years.includes(currentYear)) return currentYear;
+    return years[years.length - 1] || "all";
+}
+
+
+function renderLedgerNavigation(years, period) {
+    const previous = document.querySelector('[data-ledger-action="previous"]');
+    const selected = document.querySelector('[data-ledger-action="selected"]');
+    const next = document.querySelector('[data-ledger-action="next"]');
+    const all = document.querySelector('[data-ledger-action="all"]');
+    const index = years.indexOf(period);
+    const isAllTime = period === "all";
+    const displayedYear = isAllTime
+        ? getInitialLedgerPeriod(years, new Date().getFullYear())
+        : period;
+
+    selected.textContent = displayedYear === "all" ? "Year" : String(displayedYear);
+    selected.dataset.ledgerYear = displayedYear === "all" ? "" : String(displayedYear);
+    selected.disabled = displayedYear === "all" || !isAllTime;
+    selected.setAttribute("aria-label", isAllTime
+        ? `Show ${displayedYear} reading record`
+        : `${period} selected`);
+    selected.setAttribute("aria-pressed", String(!isAllTime));
+    previous.disabled = isAllTime || index <= 0;
+    next.disabled = isAllTime || index < 0 || index >= years.length - 1;
+    all.setAttribute("aria-pressed", String(isAllTime));
 }
 
 
@@ -1350,14 +1460,22 @@ async function getLedgerWorks(works) {
 }
 
 
-function calculateReadingLedger(works, year) {
+function calculateReadingLedger(works, period) {
 
     const sessions = works.flatMap((work) => getLedgerSessions(work));
-    const completed = sessions.filter((entry) => entry.session.status === "read");
-    const abandoned = sessions.filter((entry) => entry.session.status === "dnf");
+    const isAllTime = period === "all";
+    const matchesEventYear = (entry, field) => {
+        if (isAllTime) return true;
+        return getReadingDateParts(entry.session[field])?.year === period;
+    };
+    const completed = sessions.filter((entry) =>
+        entry.session.status === "read" && matchesEventYear(entry, "dateFinished")
+    );
+    const abandoned = sessions.filter((entry) =>
+        entry.session.status === "dnf" && matchesEventYear(entry, "dateAbandoned")
+    );
     const started = sessions.filter((entry) =>
-        Boolean(entry.session.dateStarted) ||
-        ["currently-reading", "read", "dnf"].includes(entry.session.status)
+        Boolean(getReadingDateParts(entry.session.dateStarted)) && matchesEventYear(entry, "dateStarted")
     );
     const completedWorks = uniqueLedgerWorks(completed.map((entry) => entry.work));
     const ratings = completedWorks
@@ -1368,22 +1486,26 @@ function calculateReadingLedger(works, year) {
         .filter((entry) => entry.pages !== null);
     const monthlyCompletions = Array(12).fill(0);
 
-    completed.forEach((entry) => {
-        const date = entry.session.dateFinished;
-        if (typeof date === "string" && date.startsWith(`${year}-`) && date.length >= 7) {
-            const month = Number(date.slice(5, 7));
-            if (month >= 1 && month <= 12) monthlyCompletions[month - 1] += 1;
-        }
+    const completionsByYear = countLedgerValues(completed
+        .map((entry) => getReadingDateParts(entry.session.dateFinished)?.year)
+        .filter(Boolean)
+        .map(String))
+        .sort((first, second) => Number(first.label) - Number(second.label));
+
+    if (!isAllTime) completed.forEach((entry) => {
+        const month = getReadingDateParts(entry.session.dateFinished)?.month;
+        if (month !== null && month !== undefined) monthlyCompletions[month - 1] += 1;
     });
 
     return {
-        year,
+        period,
+        isAllTime,
         completed: completed.length,
         started: started.length,
         abandoned: abandoned.length,
         current: works.filter((work) => work.status === "currently-reading").length,
-        completedThisYear: completed.filter((entry) => String(entry.session.dateFinished || "").startsWith(String(year))).length,
         monthlyCompletions,
+        completionsByYear,
         genres: countLedgerValues(completed.flatMap((entry) => entry.work.genres || [])),
         authors: countLedgerValues(completed.map((entry) => entry.work.author).filter(Boolean)),
         approximatePages: pageEntries.reduce((total, entry) => total + entry.pages, 0),
@@ -1428,6 +1550,12 @@ function uniqueLedgerWorks(works) {
 
 function getLedgerPageCount(work) {
 
+    /* A short story's representative edition is commonly the collection
+     * containing it, so its pages are unsafe unless explicitly work-level. */
+    if (work.type === "Short Story" && work.pageCountScope !== "work") {
+        return null;
+    }
+
     const candidates = [
         work.pageCount,
         work.representativeEdition?.pageCount,
@@ -1453,14 +1581,17 @@ function countLedgerValues(values) {
 
 function renderLedgerStats(ledger) {
 
-    document.getElementById("ledger-annual-heading").textContent = `${ledger.year} & All Recorded Years`;
+    document.getElementById("ledger-annual-heading").textContent = ledger.isAllTime
+        ? "All-Time Reading Record"
+        : `${ledger.period} Reading Record`;
     const stats = [
-        ["Completed", ledger.completed, "all recorded sessions"],
-        ["Started", ledger.started, "all recorded sessions"],
-        ["Did Not Finish", ledger.abandoned, "all recorded sessions"],
-        ["Completed This Year", ledger.completedThisYear, String(ledger.year)],
-        ["Currently Reading", ledger.current, "on your active shelf"]
+        ["Completed", ledger.completed, ledger.isAllTime ? "all recorded sessions" : String(ledger.period)],
+        ["Started", ledger.started, ledger.isAllTime ? "all dated starts" : String(ledger.period)],
+        ["Did Not Finish", ledger.abandoned, ledger.isAllTime ? "all recorded sessions" : String(ledger.period)]
     ];
+    if (ledger.isAllTime || ledger.period === new Date().getFullYear()) {
+        stats.push(["Currently Reading", ledger.current, "on your active shelf now"]);
+    }
     const container = document.getElementById("ledger-annual-stats");
     container.innerHTML = "";
 
@@ -1479,24 +1610,36 @@ function renderLedgerStats(ledger) {
 }
 
 
-function renderLedgerMonthlyChart(months) {
+function renderLedgerChart(ledger) {
 
     const chart = document.getElementById("ledger-monthly-chart");
+    const chartHeading = document.getElementById("ledger-monthly-heading");
+    const chartLabel = document.getElementById("ledger-chart-label");
+    const entries = ledger.isAllTime
+        ? ledger.completionsByYear
+        : ledger.monthlyCompletions.map((count, index) => ({
+            label: new Intl.DateTimeFormat(undefined, { month: "short" }).format(new Date(2000, index, 1)),
+            count
+        }));
+    const months = entries.map((entry) => entry.count);
     const maximum = Math.max(...months, 1);
     chart.innerHTML = "";
+    chart.classList.toggle("ledger-yearly-chart", ledger.isAllTime);
     document.getElementById("ledger-monthly-section").hidden = !months.some(Boolean);
+    chartLabel.textContent = ledger.isAllTime ? "Yearly record" : "Monthly record";
+    chartHeading.textContent = ledger.isAllTime ? "Reading by Year" : "Works Completed by Month";
 
-    months.forEach((count, index) => {
+    entries.forEach((entry) => {
         const row = document.createElement("div");
         const label = document.createElement("span");
         const track = document.createElement("span");
         const bar = document.createElement("span");
         const value = document.createElement("strong");
-        label.textContent = new Intl.DateTimeFormat(undefined, { month: "short" }).format(new Date(2000, index, 1));
-        bar.style.width = `${(count / maximum) * 100}%`;
+        label.textContent = entry.label;
+        bar.style.width = `${(entry.count / maximum) * 100}%`;
         track.className = "ledger-chart-track";
         bar.className = "ledger-chart-bar";
-        value.textContent = String(count);
+        value.textContent = String(entry.count);
         track.appendChild(bar);
         row.append(label, track, value);
         chart.appendChild(row);
