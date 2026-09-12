@@ -3768,6 +3768,34 @@ img {
     border-left: 2px solid #927849;
 }
 
+.reading-ledger-title-row {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 24px;
+}
+
+.reading-ledger-navigation {
+    display: flex;
+    border: 1px solid #7d6842;
+}
+
+.reading-ledger-navigation button {
+    min-height: 34px;
+    padding: 6px 10px;
+    color: #d8c59e;
+    background: #31191b;
+    border: 0;
+    border-left: 1px solid #7d6842;
+    font: 700 0.65rem Arial, Helvetica, sans-serif;
+    letter-spacing: 0.05em;
+}
+
+.reading-ledger-navigation button:first-child { border-left: 0; }
+.reading-ledger-navigation button[aria-pressed="true"] { color: #2f2119; background: #c9b686; }
+.reading-ledger-navigation button:disabled { color: #796c58; cursor: not-allowed; }
+.reading-ledger-navigation button:focus-visible { outline: 2px solid #ead8aa; outline-offset: 3px; }
+
 .reading-ledger-label,
 .ledger-section-heading p {
     margin: 0 0 8px;
@@ -3885,6 +3913,10 @@ img {
     text-transform: uppercase;
 }
 
+.ledger-monthly-chart.ledger-yearly-chart > div {
+    grid-template-columns: 50px minmax(0, 1fr) 24px;
+}
+
 .ledger-chart-track {
     height: 7px;
     background: rgba(81, 55, 33, 0.13);
@@ -3995,6 +4027,15 @@ img {
 
 
 @media (max-width: 650px) {
+
+    .reading-ledger-title-row {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .reading-ledger-navigation {
+        max-width: 100%;
+    }
 
     .library-controls-inner {
         grid-template-columns: 1fr;

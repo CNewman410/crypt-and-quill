@@ -323,7 +323,15 @@
             <div class="reading-ledger-inner">
                 <header class="reading-ledger-header">
                     <p class="reading-ledger-label">Private archival record</p>
-                    <h2 id="reading-ledger-heading">Reading Ledger</h2>
+                    <div class="reading-ledger-title-row">
+                        <h2 id="reading-ledger-heading">Reading Ledger</h2>
+                        <div class="reading-ledger-navigation" role="group" aria-label="Reading Ledger year navigation">
+                            <button type="button" data-ledger-action="previous" aria-label="Previous reading year">Previous</button>
+                            <button type="button" class="reading-ledger-year" data-ledger-action="selected" aria-pressed="true" disabled>Year</button>
+                            <button type="button" data-ledger-action="next" aria-label="Next reading year">Next</button>
+                            <button type="button" data-ledger-action="all" aria-pressed="false">All Time</button>
+                        </div>
+                    </div>
                     <p>A reckoning of the works and reading sessions recorded on these shelves.</p>
                 </header>
 
@@ -337,14 +345,14 @@
                     <section class="ledger-section" aria-labelledby="ledger-annual-heading">
                         <div class="ledger-section-heading">
                             <p>Annual record</p>
-                            <h3 id="ledger-annual-heading"></h3>
+                            <h3 id="ledger-annual-heading" aria-live="polite"></h3>
                         </div>
                         <div class="ledger-stat-grid" id="ledger-annual-stats"></div>
                     </section>
 
                     <section class="ledger-section" id="ledger-monthly-section" aria-labelledby="ledger-monthly-heading">
                         <div class="ledger-section-heading">
-                            <p>Monthly record</p>
+                            <p id="ledger-chart-label">Monthly record</p>
                             <h3 id="ledger-monthly-heading">Works Completed by Month</h3>
                         </div>
                         <div class="ledger-monthly-chart" id="ledger-monthly-chart"></div>

@@ -240,6 +240,13 @@ Priority: MEDIUM
 - [x] support repeat-reading sessions
 - [ ] add calendar statistics and longer-range archive views
 
+## Reading Ledger
+
+- [x] add year navigation derived from reading-history dates
+- [x] add year-specific session statistics and monthly completion records
+- [x] add All-Time statistics and completion-by-year records
+- [ ] expand statistics with additional archive trends and taxonomy insights
+
 ## Additional Filters
 
 Potential filters:
@@ -262,7 +269,7 @@ Future:
 - [ ] favorite genres
 - [ ] favorite subgenres
 - [ ] most common themes
-- [ ] books/pages read by year
+- [x] works/pages read by year and across All Time
 
 ---
 
