@@ -151,6 +151,9 @@
                         <button class="library-view-button" type="button" data-library-view="calendar" aria-pressed="false">
                             Calendar
                         </button>
+                        <button class="library-view-button" type="button" data-library-view="ledger" aria-pressed="false">
+                            Reading Ledger
+                        </button>
                     </div>
 
                 </div>
@@ -309,6 +312,59 @@
                     <p class="reading-calendar-year-note" id="reading-calendar-year-note" hidden>
                         Some reading dates are recorded with year-only precision and are not shown on the monthly calendar.
                     </p>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- READING LEDGER -->
+
+        <section class="reading-ledger-section" id="reading-ledger-section" hidden aria-labelledby="reading-ledger-heading">
+            <div class="reading-ledger-inner">
+                <header class="reading-ledger-header">
+                    <p class="reading-ledger-label">Private archival record</p>
+                    <h2 id="reading-ledger-heading">Reading Ledger</h2>
+                    <p>A reckoning of the works and reading sessions recorded on these shelves.</p>
+                </header>
+
+                <div class="reading-ledger-empty" id="reading-ledger-empty" hidden>
+                    <span aria-hidden="true">◈</span>
+                    <h3>No entries have been inscribed.</h3>
+                    <p>Record a reading status or date from a work’s details page to begin your ledger.</p>
+                </div>
+
+                <div class="reading-ledger-content" id="reading-ledger-content">
+                    <section class="ledger-section" aria-labelledby="ledger-annual-heading">
+                        <div class="ledger-section-heading">
+                            <p>Annual record</p>
+                            <h3 id="ledger-annual-heading"></h3>
+                        </div>
+                        <div class="ledger-stat-grid" id="ledger-annual-stats"></div>
+                    </section>
+
+                    <section class="ledger-section" id="ledger-monthly-section" aria-labelledby="ledger-monthly-heading">
+                        <div class="ledger-section-heading">
+                            <p>Monthly record</p>
+                            <h3 id="ledger-monthly-heading">Works Completed by Month</h3>
+                        </div>
+                        <div class="ledger-monthly-chart" id="ledger-monthly-chart"></div>
+                    </section>
+
+                    <div class="ledger-columns">
+                        <section class="ledger-section" id="ledger-genres-section" aria-labelledby="ledger-genres-heading">
+                            <div class="ledger-section-heading"><p>Classification</p><h3 id="ledger-genres-heading">Genre Totals</h3></div>
+                            <ol class="ledger-ranked-list" id="ledger-genres-list"></ol>
+                        </section>
+                        <section class="ledger-section" id="ledger-authors-section" aria-labelledby="ledger-authors-heading">
+                            <div class="ledger-section-heading"><p>Authorship</p><h3 id="ledger-authors-heading">Author Totals</h3></div>
+                            <ol class="ledger-ranked-list" id="ledger-authors-list"></ol>
+                        </section>
+                    </div>
+
+                    <section class="ledger-section" id="ledger-notes-section" aria-labelledby="ledger-notes-heading">
+                        <div class="ledger-section-heading"><p>Volume notes</p><h3 id="ledger-notes-heading">Reading Totals</h3></div>
+                        <div class="ledger-notes" id="ledger-notes"></div>
+                    </section>
                 </div>
             </div>
         </section>
