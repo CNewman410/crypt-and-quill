@@ -98,6 +98,8 @@ let visibleCalendarMonth =
 
 let selectedLedgerPeriod = null;
 
+let lastSelectedLedgerYear = null;
+
 
 
 /* ========================================
@@ -1410,16 +1412,20 @@ function renderLedgerNavigation(years, period) {
     const all = document.querySelector('[data-ledger-action="all"]');
     const index = years.indexOf(period);
     const isAllTime = period === "all";
+    if (!isAllTime) {
+        lastSelectedLedgerYear = period;
+    }
+
     const displayedYear = isAllTime
-        ? getInitialLedgerPeriod(years, new Date().getFullYear())
+        ? lastSelectedLedgerYear || new Date().getFullYear()
         : period;
 
-    selected.textContent = displayedYear === "all" ? "Year" : String(displayedYear);
-    selected.dataset.ledgerYear = displayedYear === "all" ? "" : String(displayedYear);
-    selected.disabled = displayedYear === "all" || !isAllTime;
+    selected.textContent = String(displayedYear);
+    selected.dataset.ledgerYear = String(displayedYear);
+    selected.disabled = false;
     selected.setAttribute("aria-label", isAllTime
         ? `Show ${displayedYear} reading record`
-        : `${period} selected`);
+        : `${period} reading record selected`);
     selected.setAttribute("aria-pressed", String(!isAllTime));
     previous.disabled = isAllTime || index <= 0;
     next.disabled = isAllTime || index < 0 || index >= years.length - 1;

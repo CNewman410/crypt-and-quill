@@ -3777,24 +3777,46 @@ img {
 
 .reading-ledger-navigation {
     display: flex;
-    border: 1px solid #7d6842;
+    overflow: hidden;
+    background: #241214;
+    border: 1px solid #9b814d;
+    border-radius: 3px;
+    box-shadow: 0 4px 14px rgba(8, 4, 4, 0.32);
 }
 
-.reading-ledger-navigation button {
+#reading-ledger-section .reading-ledger-navigation > button {
     min-height: 34px;
     padding: 6px 10px;
     color: #d8c59e;
     background: #31191b;
     border: 0;
-    border-left: 1px solid #7d6842;
+    border-left: 1px solid #9b814d;
     font: 700 0.65rem Arial, Helvetica, sans-serif;
     letter-spacing: 0.05em;
+    transition: background-color 140ms ease, color 140ms ease;
 }
 
-.reading-ledger-navigation button:first-child { border-left: 0; }
-.reading-ledger-navigation button[aria-pressed="true"] { color: #2f2119; background: #c9b686; }
-.reading-ledger-navigation button:disabled { color: #796c58; cursor: not-allowed; }
-.reading-ledger-navigation button:focus-visible { outline: 2px solid #ead8aa; outline-offset: 3px; }
+#reading-ledger-section .reading-ledger-navigation > button:first-child { border-left: 0; }
+#reading-ledger-section .reading-ledger-navigation > button:hover:not(:disabled):not([aria-pressed="true"]) {
+    color: #f0dfb7;
+    background: #492326;
+}
+#reading-ledger-section .reading-ledger-navigation > button[aria-pressed="true"] {
+    color: #2f2119;
+    background: #c9b686;
+}
+#reading-ledger-section .reading-ledger-navigation > button:disabled {
+    color: #776957;
+    background: #251719;
+    cursor: not-allowed;
+    opacity: 0.72;
+}
+#reading-ledger-section .reading-ledger-navigation > button:focus-visible {
+    position: relative;
+    z-index: 1;
+    outline: 2px solid #f0d994;
+    outline-offset: -3px;
+}
 
 .reading-ledger-label,
 .ledger-section-heading p {
